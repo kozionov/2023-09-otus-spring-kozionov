@@ -21,15 +21,14 @@ public class CsvTestDao implements TestDao {
     public List<TestUnit> getTestUnits() {
         List<TestUnit> testUnits = null;
         try (InputStream in = getClass().getResourceAsStream(fileName);
-             BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
-
-            try (CSVReader reader = new CSVReader(br)) {
-                List<String[]> r = reader.readAll();
-                testUnits = r.stream().map(x -> TestUnitMapper.transform(x)).collect(Collectors.toList());
-            }
+             BufferedReader br = new BufferedReader(new InputStreamReader(in));
+             CSVReader reader = new CSVReader(br)) {
+            List<String[]> r = reader.readAll();
+            testUnits = r.stream().map(x -> TestUnitMapper.transform(x)).collect(Collectors.toList());
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
         return testUnits;
     }
+
 }

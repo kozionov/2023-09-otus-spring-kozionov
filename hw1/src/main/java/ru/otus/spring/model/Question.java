@@ -2,15 +2,15 @@ package ru.otus.spring.model;
 
 import java.util.List;
 
-public class TestUnit {
+public class Question {
     private String question;
 
-    private List<String> answers;
+    private List<Answer> answers;
 
-    public TestUnit() {
+    public Question() {
     }
 
-    public TestUnit(String question, List<String> answers) {
+    public Question(String question, List<Answer> answers) {
         this.question = question;
         this.answers = answers;
     }
@@ -23,11 +23,11 @@ public class TestUnit {
         this.question = question;
     }
 
-    public List<String> getAnswers() {
+    public List<Answer> getAnswers() {
         return answers;
     }
 
-    public void setAnswers(List<String> answers) {
+    public void setAnswers(List<Answer> answers) {
         this.answers = answers;
     }
 

@@ -36,7 +36,9 @@ public class CsvQuestionDao implements QuestionDao {
             csvToBean.setMappingStrategy(beanStrategy);
 
             List<QuestionDto> questionDtos = csvToBean.parse();
-            return questionDtos.stream().map(x -> x.toDomainObject()).collect(Collectors.toList());
+            return questionDtos.stream()
+                    .map(x -> x.toDomainObject())
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             throw new QuestionReadException("Ошибка чтения файла", e);
         }

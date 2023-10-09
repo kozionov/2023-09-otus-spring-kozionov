@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class TestServiceImpl implements TestService {
 
-    private final IOService ioService;
+    private IOService ioService;
 
     private QuestionDao questionDao;
 
@@ -25,7 +25,9 @@ public class TestServiceImpl implements TestService {
         List<Question> questions = questionDao.findAll();
         for (Question q : questions) {
             List<Answer> answers = q.getAnswers();
-            List<String> s = answers.stream().map(x -> x.getText()).collect(Collectors.toList());
+            List<String> s = answers.stream()
+                    .map(x -> x.getText())
+                    .collect(Collectors.toList());
             ioService.printFormattedLine(q.getQuestion());
             ioService.printFormattedLine(s.toString());
 

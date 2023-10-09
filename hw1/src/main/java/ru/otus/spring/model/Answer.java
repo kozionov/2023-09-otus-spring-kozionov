@@ -4,7 +4,7 @@ public class Answer {
 
     private String text;
 
-    private Boolean isCorrect;
+    private boolean isCorrect;
 
     public Answer() {
     }
@@ -22,11 +22,11 @@ public class Answer {
         this.text = text;
     }
 
-    public Boolean getCorrect() {
+    public boolean getCorrect() {
         return isCorrect;
     }
 
-    public void setCorrect(Boolean correct) {
+    public void setCorrect(boolean correct) {
         isCorrect = correct;
     }
 

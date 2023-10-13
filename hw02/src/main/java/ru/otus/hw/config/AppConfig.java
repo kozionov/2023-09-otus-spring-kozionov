@@ -1,12 +1,13 @@
 package ru.otus.hw.config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @PropertySource("classpath:application.properties")
-public class AppConfig implements TestConfig, TestFileNameProvider {
+public class AppConfig {
 
     @Value("${test.rightAnswersCountToPass}")
     private int rightAnswersCountToPass;
@@ -14,13 +15,24 @@ public class AppConfig implements TestConfig, TestFileNameProvider {
     @Value("${test.fileName}")
     private String testFileName;
 
-    @Override
-    public int getRightAnswersCountToPass() {
-        return rightAnswersCountToPass;
+    @Bean
+    public TestConfig testConfig() {
+        return new TestConfig() {
+            @Override
+            public int getRightAnswersCountToPass() {
+                return rightAnswersCountToPass;
+            }
+        };
     }
 
-    @Override
-    public String getTestFileName() {
-        return testFileName;
+    @Bean
+    public TestFileNameProvider testFileNameProvider() {
+        return new TestFileNameProvider() {
+            @Override
+            public String getTestFileName() {
+                return testFileName;
+            }
+        };
     }
+
 }

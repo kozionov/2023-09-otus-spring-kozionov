@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TestServiceImpl implements TestService {
 
-    public static final String MESSAGE = "Error answer number";
+    private static final String MESSAGE = "Error answer number";
 
     private final IOService ioService;
 
@@ -28,10 +28,11 @@ public class TestServiceImpl implements TestService {
 
         for (var question : questions) {
             ioService.printLine(question.text());
-            List<String> answers = question.answers().stream()
-                    .map(x -> x.text())
+            List<String> askQuestions = question.answers().stream()
+                    .map(q -> q.text())
                     .collect(Collectors.toList());
-            var answerNum = ioService.readIntForRangeWithPrompt(1, answers.size(), answers.toString(), MESSAGE);
+            var answerMaxNum = askQuestions.size();
+            var answerNum = ioService.readIntForRangeWithPrompt(1, answerMaxNum, askQuestions.toString(), MESSAGE);
             testResult.applyAnswer(question, question.answers().get(answerNum - 1).isCorrect());
         }
         return testResult;

@@ -12,4 +12,7 @@ public interface IOService {
     int readIntForRange(int min, int max, String errorMessage);
 
     int readIntForRangeWithPrompt(int min, int max, String prompt, String errorMessage);
+
+    int readIntForRangeWithPromptLocalizedError(int i, int answerMaxNum, String answers, String message);
+
 }

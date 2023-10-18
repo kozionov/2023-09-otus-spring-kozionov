@@ -65,4 +65,9 @@ public class StreamsIOService implements IOService {
         printLine(prompt);
         return readIntForRange(min, max, errorMessage);
     }
+
+    @Override
+    public int readIntForRangeWithPromptLocalizedError(int min, int max, String prompt, String errorMessage) {
+        return readIntForRangeWithPrompt(min, max, prompt, errorMessage);
+    }
 }

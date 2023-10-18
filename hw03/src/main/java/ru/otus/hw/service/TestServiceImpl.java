@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TestServiceImpl implements TestService {
 
-    private static final String MESSAGE = "Error answer number";
+    private static final String MESSAGE = "TestService.error";
 
     private final LocalizedIOService ioService;
 
@@ -38,10 +38,8 @@ public class TestServiceImpl implements TestService {
 
     private int askQuestion(Question question) {
         ioService.printLine(question.text());
-        String answers = question.answers().stream()
-                .map(Answer::text)
-                .collect(Collectors.joining(String.format("%n")));
+        String answers = question.answers().stream().map(Answer::text).collect(Collectors.joining(String.format("%n")));
         var answerMaxNum = question.answers().size();
-        return ioService.readIntForRangeWithPrompt(1, answerMaxNum, answers, MESSAGE);
+        return ioService.readIntForRangeWithPromptLocalizedError(1, answerMaxNum, answers, MESSAGE);
     }
 }

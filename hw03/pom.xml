@@ -26,6 +26,7 @@
         <checkstyle.config.url>
             https://raw.githubusercontent.com/OtusTeam/Spring/master/checkstyle.xml
         </checkstyle.config.url>
+        <minimal.maven.version>3.3.9</minimal.maven.version>
     </properties>
     <dependencies>
         <dependency>

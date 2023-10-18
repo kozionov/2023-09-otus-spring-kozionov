@@ -8,7 +8,6 @@ spring:
 test:
   rightAnswersCountToPass: 3
   locale: en_US
-#  locale: ru_RU
   fileNameByLocaleTag:
     ru-RU: /test_ru.csv
     en-US: /test.csv

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
@@ -82,15 +83,20 @@ public class BookRepositoryJdbc implements BookRepository {
 
     private Book insert(Book book) {
         var keyHolder = new GeneratedKeyHolder();
+        MapSqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("title", book.getTitle())
+                .addValue("author_id", book.getAuthor().getId());
+        namedParameterJdbcOperations.update("insert into books (title, author_id) values (:title, :author_id)",
+                parameters, keyHolder, new String[]{"id"});
+
         book.setId(keyHolder.getKeyAs(Long.class));
-        namedParameterJdbcOperations.update("insert into books (id, title) values (:id, :title)",
-                Map.of("id", book.getId(), "title", book.getTitle()));
         batchInsertGenresRelationsFor(book);
         return book;
     }
 
     private Book update(Book book) {
-        //...
+        namedParameterJdbcOperations.update("update books set title = :title, author_id=:author_id where id =:id",
+                Map.of("id", book.getId(), "title", book.getTitle(), "author_id", book.getAuthor().getId()));
 
         removeGenresRelationsFor(book);
         batchInsertGenresRelationsFor(book);

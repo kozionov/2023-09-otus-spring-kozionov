@@ -23,7 +23,7 @@ public class GenreRepositoryJdbc implements GenreRepository {
 
     @Override
     public List<Genre> findAll() {
-        return namedParameterJdbcOperations.query("select id, name from genres", new GnreRowMapper());
+        return namedParameterJdbcOperations.query("select id, name from genres", new GenreRowMapper());
     }
 
     @Override
@@ -32,10 +32,10 @@ public class GenreRepositoryJdbc implements GenreRepository {
                 .map(x -> String.valueOf(x))
                 .collect(Collectors.joining(","));
         Map<String, Object> params = Collections.singletonMap("id", condition);
-        return namedParameterJdbcOperations.queryForList("select id, name from genres where id in (:id)", params, Genre.class);
+        return namedParameterJdbcOperations.query("select id, name from genres where id in (:id)", params, new GenreRowMapper());
     }
 
-    private static class GnreRowMapper implements RowMapper<Genre> {
+    private static class GenreRowMapper implements RowMapper<Genre> {
 
         @Override
         public Genre mapRow(ResultSet rs, int i) throws SQLException {

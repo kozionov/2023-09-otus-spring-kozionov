@@ -28,10 +28,7 @@ public class GenreRepositoryJdbc implements GenreRepository {
 
     @Override
     public List<Genre> findAllByIds(List<Long> ids) {
-        String condition = ids.stream()
-                .map(x -> String.valueOf(x))
-                .collect(Collectors.joining(","));
-        Map<String, Object> params = Collections.singletonMap("id", condition);
+        Map<String, Object> params = Collections.singletonMap("id", ids);
         return namedParameterJdbcOperations.query("select id, name from genres where id in (:id)", params, new GenreRowMapper());
     }
 

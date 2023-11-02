@@ -15,6 +15,7 @@ import ru.otus.hw.models.Genre;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -105,11 +106,14 @@ public class BookRepositoryJdbc implements BookRepository {
     }
 
     private void batchInsertGenresRelationsFor(Book book) {
-        // batchUpdate
+        List<Long> genreIds = book.getGenres().stream().map(g -> g.getId()).collect(Collectors.toList());
+        String values = genreIds.stream().map(i -> "(" + book.getId() + "," + i + ")").collect(Collectors.joining(","));
+        namedParameterJdbcOperations.update("insert into books_genres(book_id, genre_id) values " + values, new HashMap<>());
     }
 
     private void removeGenresRelationsFor(Book book) {
-        //...
+        Map<String, Object> params = Collections.singletonMap("id", book.getId());
+        namedParameterJdbcOperations.update("delete from books_genres where book_id = :id", params);
     }
 
     private static class BookRowMapper implements RowMapper<Book> {

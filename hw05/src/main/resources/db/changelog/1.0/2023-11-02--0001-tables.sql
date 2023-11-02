@@ -1,3 +1,6 @@
+--liquibase formatted sql
+
+--changeset kozionov:2023-11-02-001-tables
 create table authors (
     id bigserial,
     full_name varchar(255),

@@ -1,3 +1,6 @@
+--liquibase formatted sql
+
+--changeset kozionov:2023-11-02-001-data
 insert into authors(full_name)
 values ('Author_1'), ('Author_2'), ('Author_3');
 

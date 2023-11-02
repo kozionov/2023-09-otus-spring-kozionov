@@ -10,7 +10,6 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Repository
 public class GenreRepositoryJdbc implements GenreRepository {
@@ -29,7 +28,8 @@ public class GenreRepositoryJdbc implements GenreRepository {
     @Override
     public List<Genre> findAllByIds(List<Long> ids) {
         Map<String, Object> params = Collections.singletonMap("id", ids);
-        return namedParameterJdbcOperations.query("select id, name from genres where id in (:id)", params, new GenreRowMapper());
+        return namedParameterJdbcOperations
+                .query("select id, name from genres where id in (:id)", params, new GenreRowMapper());
     }
 
     private static class GenreRowMapper implements RowMapper<Genre> {

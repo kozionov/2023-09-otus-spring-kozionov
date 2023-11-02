@@ -2,6 +2,7 @@ package ru.otus.hw.repositories;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -14,7 +15,12 @@ import ru.otus.hw.models.Genre;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Optional;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 @Repository
@@ -27,11 +33,22 @@ public class BookRepositoryJdbc implements BookRepository {
 
     @Override
     public Optional<Book> findById(long id) {
-        Map<String, Object> params = Collections.singletonMap("id", id);
-        Book book = namedParameterJdbcOperations
-                .queryForObject("select books.id, books.title, books.author_id, authors.full_name from books" +
-                        " left join authors on books.author_id = authors.id" +
-                        " where books.id = :id", params, new BookRowMapper());
+        Book book = null;
+        try {
+            Map<String, Object> params = Collections.singletonMap("id", id);
+            book = namedParameterJdbcOperations
+                    .queryForObject("select books.id, books.title, books.author_id, authors.full_name from books" +
+                            " left join authors on books.author_id = authors.id" +
+                            " where books.id = :id", params, new BookRowMapper());
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+
+        var genres = genreRepository.findAll();
+        var relations = getAllGenreRelations();
+        var books = Collections.singletonList(book);
+        mergeBooksInfo(books, genres, relations);
+
         return Optional.of(book);
     }
 
@@ -107,8 +124,11 @@ public class BookRepositoryJdbc implements BookRepository {
 
     private void batchInsertGenresRelationsFor(Book book) {
         List<Long> genreIds = book.getGenres().stream().map(g -> g.getId()).collect(Collectors.toList());
-        String values = genreIds.stream().map(i -> "(" + book.getId() + "," + i + ")").collect(Collectors.joining(","));
-        namedParameterJdbcOperations.update("insert into books_genres(book_id, genre_id) values " + values, new HashMap<>());
+        String values = genreIds.stream()
+                .map(i -> "(" + book.getId() + "," + i + ")")
+                .collect(Collectors.joining(","));
+        namedParameterJdbcOperations
+                .update("insert into books_genres(book_id, genre_id) values " + values, new HashMap<>());
     }
 
     private void removeGenresRelationsFor(Book book) {
@@ -145,9 +165,9 @@ public class BookRepositoryJdbc implements BookRepository {
 
         @Override
         public BookGenreRelation mapRow(ResultSet rs, int rowNum) throws SQLException {
-            long book_id = rs.getLong("book_id");
-            long genre_id = rs.getLong("genre_id");
-            return new BookGenreRelation(book_id, genre_id);
+            long bookId = rs.getLong("book_id");
+            long genreId = rs.getLong("genre_id");
+            return new BookGenreRelation(bookId, genreId);
         }
     }
 }

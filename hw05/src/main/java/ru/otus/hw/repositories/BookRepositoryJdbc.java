@@ -15,12 +15,7 @@ import ru.otus.hw.models.Genre;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.Collections;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -49,7 +44,7 @@ public class BookRepositoryJdbc implements BookRepository {
         var books = Collections.singletonList(book);
         mergeBooksInfo(books, genres, relations);
 
-        return Optional.of(book);
+        return Optional.ofNullable(book);
     }
 
     @Override
@@ -92,8 +87,10 @@ public class BookRepositoryJdbc implements BookRepository {
         for (Book b : booksWithoutGenres) {
             for (BookGenreRelation relation : relations) {
                 if (relation.bookId == b.getId()) {
-                    Genre genre = genres.stream().filter(g -> g.getId() == relation.genreId).findFirst().get();
-                    b.getGenres().add(genre);
+                    Optional<Genre> genre = genres.stream().filter(g -> g.getId() == relation.genreId).findFirst();
+                    if (genre.isPresent()) {
+                        b.getGenres().add(genre.get());
+                    }
                 }
             }
         }
@@ -124,11 +121,16 @@ public class BookRepositoryJdbc implements BookRepository {
 
     private void batchInsertGenresRelationsFor(Book book) {
         List<Long> genreIds = book.getGenres().stream().map(g -> g.getId()).collect(Collectors.toList());
-        String values = genreIds.stream()
-                .map(i -> "(" + book.getId() + "," + i + ")")
-                .collect(Collectors.joining(","));
+        Map<String, Object>[] batch = new HashMap[genreIds.size()];
+        int count = 0;
+        for (Long genreId : genreIds) {
+            Map<String, Object> map = new HashMap();
+            map.put("bookId", book.getId());
+            map.put("genreId", genreId);
+            batch[count++] = map;
+        }
         namedParameterJdbcOperations
-                .update("insert into books_genres(book_id, genre_id) values " + values, new HashMap<>());
+                .batchUpdate("insert into books_genres(book_id, genre_id) values (:bookId, :genreId)", batch);
     }
 
     private void removeGenresRelationsFor(Book book) {

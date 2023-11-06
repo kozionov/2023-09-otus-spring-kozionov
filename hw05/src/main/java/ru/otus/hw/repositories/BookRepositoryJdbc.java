@@ -2,7 +2,6 @@ package ru.otus.hw.repositories;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -15,8 +14,14 @@ import ru.otus.hw.models.Genre;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
 
 @Repository
 @RequiredArgsConstructor
@@ -28,23 +33,15 @@ public class BookRepositoryJdbc implements BookRepository {
 
     @Override
     public Optional<Book> findById(long id) {
-        Book book = null;
-        try {
-            Map<String, Object> params = Collections.singletonMap("id", id);
-            book = namedParameterJdbcOperations
-                    .queryForObject("select books.id, books.title, books.author_id, authors.full_name from books" +
-                            " left join authors on books.author_id = authors.id" +
-                            " where books.id = :id", params, new BookRowMapper());
-        } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
-        }
-
-        var genres = genreRepository.findAll();
-        var relations = getAllGenreRelations();
-        var books = Collections.singletonList(book);
-        mergeBooksInfo(books, genres, relations);
-
-        return Optional.ofNullable(book);
+        Map<String, Object> params = Collections.singletonMap("id", id);
+        List<Book> books = namedParameterJdbcOperations
+                .query("select books.id, books.title, books.author_id, authors.full_name," +
+                        " genres.id, genres.name from books" +
+                        " left join authors on books.author_id = authors.id" +
+                        " left join books_genres on books_genres.book_id = books.id" +
+                        " left join genres on genres.id = books_genres.genre_id" +
+                        " where books.id = :id", params, new FullBookRowMapper());
+        return books.stream().findFirst();
     }
 
     @Override
@@ -87,10 +84,10 @@ public class BookRepositoryJdbc implements BookRepository {
         for (Book b : booksWithoutGenres) {
             for (BookGenreRelation relation : relations) {
                 if (relation.bookId == b.getId()) {
-                    Optional<Genre> genre = genres.stream().filter(g -> g.getId() == relation.genreId).findFirst();
-                    if (genre.isPresent()) {
-                        b.getGenres().add(genre.get());
-                    }
+                    genres.stream().
+                            filter(g -> g.getId() == relation.genreId).
+                            findFirst().
+                            ifPresent(g -> b.getGenres().add(g));
                 }
             }
         }
@@ -147,6 +144,31 @@ public class BookRepositoryJdbc implements BookRepository {
             long authorId = rs.getLong("books.author_id");
             String authorName = rs.getString("authors.full_name");
             return new Book(id, title, new Author(authorId, authorName), new ArrayList<>());
+        }
+    }
+
+    private static class FullBookRowMapper implements RowMapper<Book> {
+        private Book book = new Book();
+
+        @Override
+        public Book mapRow(ResultSet rs, int rowNum) throws SQLException {
+            long id = rs.getLong("books.id");
+            String title = rs.getString("books.title");
+            long authorId = rs.getLong("books.author_id");
+            String authorName = rs.getString("authors.full_name");
+            long genreId = rs.getLong("genres.id");
+            String genreName = rs.getString("genres.name");
+            if (book.getId() != id) {
+                book.setId(id);
+                book.setTitle(title);
+                book.setAuthor(new Author(authorId, authorName));
+                List<Genre> genres = new ArrayList<>();
+                genres.add(new Genre(genreId, genreName));
+                book.setGenres(genres);
+            } else {
+                book.getGenres().add(new Genre(genreId, genreName));
+            }
+            return book;
         }
     }
 

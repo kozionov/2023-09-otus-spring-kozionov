@@ -121,7 +121,7 @@ public class BookRepositoryJdbc implements BookRepository {
         Map<String, Object>[] batch = new HashMap[genreIds.size()];
         int count = 0;
         for (Long genreId : genreIds) {
-            Map<String, Object> map = new HashMap();
+            Map<String, Object> map = new HashMap<>();
             map.put("bookId", book.getId());
             map.put("genreId", genreId);
             batch[count++] = map;

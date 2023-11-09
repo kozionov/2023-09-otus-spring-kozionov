@@ -40,7 +40,7 @@ public class BookRepositoryJdbc implements BookRepository {
                         " left join authors on books.author_id = authors.id" +
                         " left join books_genres on books_genres.book_id = books.id" +
                         " left join genres on genres.id = books_genres.genre_id" +
-                        " where books.id = :id", params, new FullBookRowMapper());
+                        " where books.id = :id", params, new BookResultSetExtractor());
         return books.stream().findFirst();
     }
 
@@ -147,38 +147,36 @@ public class BookRepositoryJdbc implements BookRepository {
         }
     }
 
-    private static class FullBookRowMapper implements RowMapper<Book> {
-        private Book book = new Book();
-
-        @Override
-        public Book mapRow(ResultSet rs, int rowNum) throws SQLException {
-            long id = rs.getLong("books.id");
-            String title = rs.getString("books.title");
-            long authorId = rs.getLong("books.author_id");
-            String authorName = rs.getString("authors.full_name");
-            long genreId = rs.getLong("genres.id");
-            String genreName = rs.getString("genres.name");
-            if (book.getId() != id) {
-                book.setId(id);
-                book.setTitle(title);
-                book.setAuthor(new Author(authorId, authorName));
-                List<Genre> genres = new ArrayList<>();
-                genres.add(new Genre(genreId, genreName));
-                book.setGenres(genres);
-            } else {
-                book.getGenres().add(new Genre(genreId, genreName));
-            }
-            return book;
-        }
-    }
-
     @SuppressWarnings("ClassCanBeRecord")
     @RequiredArgsConstructor
     private static class BookResultSetExtractor implements ResultSetExtractor<List<Book>> {
 
         @Override
         public List<Book> extractData(ResultSet rs) throws SQLException, DataAccessException {
-            return new ArrayList<>();
+            List<Book> books = new ArrayList<>();
+            Book book = null;
+            while (rs.next()) {
+                long id = rs.getLong("books.id");
+                String title = rs.getString("books.title");
+                long authorId = rs.getLong("books.author_id");
+                String authorName = rs.getString("authors.full_name");
+                long genreId = rs.getLong("genres.id");
+                String genreName = rs.getString("genres.name");
+                if (!books.stream().anyMatch(x -> x.getId() == id)) {
+                    book = new Book();
+                    book.setId(id);
+                    book.setTitle(title);
+                    book.setAuthor(new Author(authorId, authorName));
+                    List<Genre> genres = new ArrayList<>();
+                    genres.add(new Genre(genreId, genreName));
+                    book.setGenres(genres);
+                    books.add(book);
+                } else {
+                    book = books.stream().filter(x -> x.getId() == id).findFirst().get();
+                    book.getGenres().add(new Genre(genreId, genreName));
+                }
+            }
+            return books;
         }
     }
 

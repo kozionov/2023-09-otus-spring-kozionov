@@ -27,9 +27,6 @@ class BookRepositoryJpaTest {
     @Autowired
     private BookRepositoryJpa repositoryJpa;
 
-    @Autowired
-    private TestEntityManager em;
-
     private List<Author> dbAuthors;
 
     private List<Genre> dbGenres;
@@ -104,9 +101,8 @@ class BookRepositoryJpaTest {
     @DisplayName("должен удалять книгу по id ")
     @Test
     void shouldDeleteBook() {
-        assertThat(repositoryJpa.findById(1L)).isPresent();
         repositoryJpa.deleteById(1L);
-        assertThat(Optional.ofNullable(em.find(Book.class, 1L))).isEmpty();
+        assertThat(repositoryJpa.findById(1L)).isEmpty();
     }
 
     private static List<Author> getDbAuthors() {

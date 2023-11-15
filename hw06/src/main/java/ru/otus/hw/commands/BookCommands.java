@@ -1,11 +1,13 @@
 package ru.otus.hw.commands;
 
 import lombok.RequiredArgsConstructor;
+import org.h2.tools.Console;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import ru.otus.hw.converters.BookConverter;
 import ru.otus.hw.services.BookService;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +18,11 @@ public class BookCommands {
     private final BookService bookService;
 
     private final BookConverter bookConverter;
+
+    @ShellMethod(value = "start console", key = "st")
+    public void startConsole() throws SQLException {
+        Console.main();
+    }
 
     @ShellMethod(value = "Find all books", key = "ab")
     public String findAllBooks() {

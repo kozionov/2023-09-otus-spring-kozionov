@@ -14,7 +14,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class CommentServiceImpl implements CommentService {
+
     private final CommentRepository commentRepository;
+
     private final BookRepository bookRepository;
 
     @Transactional(readOnly = true)

@@ -30,5 +30,4 @@ public class Comment {
     @JoinColumn(name = "book_id", referencedColumnName = "id")
     private Book book;
 
-//    private Comment parentComment;
 }

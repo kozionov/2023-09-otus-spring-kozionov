@@ -53,7 +53,7 @@ public class BookCommands {
     }
 
     @ShellMethod(value = "Delete book by id", key = "bdel")
-    public void updateBook(long id) {
+    public void deleteBook(long id) {
         bookService.deleteById(id);
     }
 }

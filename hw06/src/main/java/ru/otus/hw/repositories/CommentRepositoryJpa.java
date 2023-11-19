@@ -5,6 +5,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Comment;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class CommentRepositoryJpa implements CommentRepository {
 
     @Override
     public List<Comment> findAllByBookId(long bookId) {
+        em.find(Book.class, bookId);
         Query query = em.createQuery("select cm from Comment cm where cm.book.id = :bookId");
         query.setParameter("bookId", bookId);
         return query.getResultList();
@@ -40,8 +42,9 @@ public class CommentRepositoryJpa implements CommentRepository {
 
     @Override
     public void deleteById(long id) {
-        Query query = em.createQuery("delete from Comment c where c.id = :id");
-        query.setParameter("id", id);
-        query.executeUpdate();
+        Optional<Comment> comment = findById(id);
+        if (comment.isPresent()) {
+            em.remove(comment.get());
+        }
     }
 }

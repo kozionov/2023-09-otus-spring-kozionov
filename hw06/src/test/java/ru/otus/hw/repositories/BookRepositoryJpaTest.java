@@ -92,20 +92,5 @@ class BookRepositoryJpaTest {
     private List<Genre> getDbGenres() {
         return em.getEntityManager().createQuery("select g from Genre g", Genre.class).getResultList();
     }
-//
-//    private List<Book> getDbBooks(List<Author> dbAuthors, List<Genre> dbGenres) {
-//        return IntStream.range(1, 4).boxed()
-//                .map(id -> new Book(id,
-//                        "BookTitle_" + id,
-//                        dbAuthors.get(id - 1),
-//                        dbGenres.subList((id - 1) * 2, (id - 1) * 2 + 2)
-//                ))
-//                .toList();
-//    }
-//
-//    private List<Book> getDbBooks() {
-//        var dbAuthors = getDbAuthors();
-//        var dbGenres = getDbGenres();
-//        return getDbBooks(dbAuthors, dbGenres);
-//    }
+
 }

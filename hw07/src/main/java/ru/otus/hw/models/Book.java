@@ -7,7 +7,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.FetchType;
@@ -36,7 +36,7 @@ public class Book {
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     private Author author;
 
-    @OneToMany(targetEntity = Genre.class, fetch = FetchType.LAZY)
+    @ManyToMany(targetEntity = Genre.class, fetch = FetchType.LAZY)
     @JoinTable(name = "books_genres", joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private List<Genre> genres;

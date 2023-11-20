@@ -32,7 +32,9 @@ public class BookServiceImpl implements BookService {
     @Transactional(readOnly = true)
     @Override
     public List<Book> findAll() {
-        return bookRepository.findAll();
+        List<Book> books = bookRepository.findAll();
+        books.stream().peek(b->b.getGenres().size());
+        return books;
     }
 
     @Transactional

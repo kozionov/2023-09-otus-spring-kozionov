@@ -14,7 +14,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BookRepositoryJpa implements BookRepository {
 
-    private final AuthorRepository authorRepository;
 
     @PersistenceContext
     private final EntityManager em;
@@ -26,8 +25,7 @@ public class BookRepositoryJpa implements BookRepository {
 
     @Override
     public List<Book> findAll() {
-        authorRepository.findAll();
-        TypedQuery<Book> query = em.createQuery("select distinct b from Book b left join fetch b.genres", Book.class);
+        TypedQuery<Book> query = em.createQuery("select distinct b from Book b left join fetch b.author", Book.class);
         return query.getResultList();
     }
 

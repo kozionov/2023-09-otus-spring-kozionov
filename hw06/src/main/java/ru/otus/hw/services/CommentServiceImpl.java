@@ -37,7 +37,7 @@ public class CommentServiceImpl implements CommentService {
     public Comment insert(String text, long bookId) {
         Optional<Book> book = bookRepository.findById(bookId);
         if (!book.isPresent()) {
-            throw new EntityNotFoundException("Книга с id " + bookId + " не найдена!");
+            throw new EntityNotFoundException("Book with id %d not found".formatted(bookId));
         }
         Comment comment = new Comment();
         comment.setText(text);
@@ -56,7 +56,7 @@ public class CommentServiceImpl implements CommentService {
     public Comment update(long id, String text, long bookId) {
         Optional<Book> book = bookRepository.findById(bookId);
         if (!book.isPresent()) {
-            throw new EntityNotFoundException("Книга с id " + bookId + " не найдена!");
+            throw new EntityNotFoundException("Book with id %d not found".formatted(bookId));
         }
         Comment comment = commentRepository.findById(id).get();
         comment.setText(text);

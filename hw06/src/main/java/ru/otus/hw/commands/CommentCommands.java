@@ -33,15 +33,15 @@ public class CommentCommands {
 
     //cins test 1
     @ShellMethod(value = "Insert comment", key = "cins")
-    public String insertComment(String text, long authorId) {
-        var savedComment = commentService.insert(text, authorId);
+    public String insertComment(String text, long bookId) {
+        var savedComment = commentService.insert(text, bookId);
         return commentConverter.commentToString(savedComment);
     }
 
     //cupd 2 text3 1
     @ShellMethod(value = "Update comment", key = "cupd")
-    public String updateComment(long id, String text, long authorId) {
-        var savedComment = commentService.update(id, text, authorId);
+    public String updateComment(long id, String text, long bookId) {
+        var savedComment = commentService.update(id, text, bookId);
         return commentConverter.commentToString(savedComment);
     }
 

@@ -23,6 +23,10 @@ public class CommentServiceImpl implements CommentService {
     @Transactional(readOnly = true)
     @Override
     public List<Comment> findAllByBookId(long bookId) {
+        Optional<Book> book = bookRepository.findById(bookId);
+        if (!book.isPresent()) {
+            throw new EntityNotFoundException("Book with id %d not found".formatted(bookId));
+        }
         return commentRepository.findAllByBookId(bookId);
     }
 

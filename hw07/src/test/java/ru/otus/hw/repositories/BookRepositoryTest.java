@@ -9,10 +9,10 @@ import org.springframework.context.annotation.Import;
 @DisplayName("Репозиторий на основе Spring Data для работы с книгами ")
 @DataJpaTest
 @Import({BookRepository.class, GenreRepository.class, AuthorRepository.class})
-class BookRepositoryJpaTest {
+class BookRepositoryTest {
 
     @Autowired
-    private BookRepository repositoryJpa;
+    private BookRepository repository;
 
     @Autowired
     private TestEntityManager em;

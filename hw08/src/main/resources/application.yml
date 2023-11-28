@@ -3,6 +3,10 @@ spring:
     mongodb:
       port: 0 # when flapdoodle using
       database: library
+  shell:
+    command:
+      version:
+        enabled: false
 
 de:
   flapdoodle:

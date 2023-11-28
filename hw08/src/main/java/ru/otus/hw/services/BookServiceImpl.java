@@ -14,9 +14,7 @@ import ru.otus.hw.repositories.GenreRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import static org.springframework.util.CollectionUtils.isEmpty;
-
 @RequiredArgsConstructor
 @Service
 public class BookServiceImpl implements BookService {
@@ -49,13 +47,13 @@ public class BookServiceImpl implements BookService {
     @Transactional
     @Override
     public BookDto insert(String title, long authorId, List<Long> genresIds) {
-        BookDto book = save(0, title, authorId, genresIds);
+        BookDto book = save(null, title, authorId, genresIds);
         return modelMapper.map(book, BookDto.class);
     }
 
     @Transactional
     @Override
-    public BookDto update(long id, String title, long authorId, List<Long> genresIds) {
+    public BookDto update(String id, String title, long authorId, List<Long> genresIds) {
         BookDto book = save(id, title, authorId, genresIds);
         return modelMapper.map(book, BookDto.class);
     }
@@ -66,7 +64,7 @@ public class BookServiceImpl implements BookService {
         bookRepository.deleteById(id);
     }
 
-    private BookDto save(long id, String title, long authorId, List<Long> genresIds) {
+    private BookDto save(String id, String title, long authorId, List<Long> genresIds) {
         var author = authorRepository.findById(authorId)
                 .orElseThrow(() -> new EntityNotFoundException("Author with id %d not found".formatted(authorId)));
         var genres = genreRepository.findAllByIdIn(genresIds);

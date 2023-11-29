@@ -28,4 +28,9 @@ public class Book {
     @DBRef
     private List<Genre> genres;
 
+    public Book(String title, Author author, List<Genre> genres) {
+        this.title = title;
+        this.author = author;
+        this.genres = genres;
+    }
 }

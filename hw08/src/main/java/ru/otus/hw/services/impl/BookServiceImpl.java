@@ -1,4 +1,4 @@
-package ru.otus.hw.services;
+package ru.otus.hw.services.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -10,6 +10,7 @@ import ru.otus.hw.models.Book;
 import ru.otus.hw.repositories.AuthorRepository;
 import ru.otus.hw.repositories.BookRepository;
 import ru.otus.hw.repositories.GenreRepository;
+import ru.otus.hw.services.BookService;
 
 import java.util.List;
 import java.util.Optional;

@@ -22,26 +22,26 @@ public class CommentServiceImpl implements CommentService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Comment> findAllByBookId(long bookId) {
+    public List<Comment> findAllByBookId(String bookId) {
         Optional<Book> book = bookRepository.findById(bookId);
         if (!book.isPresent()) {
-            throw new EntityNotFoundException("Book with id %d not found".formatted(bookId));
+            throw new EntityNotFoundException("Book with id %s not found".formatted(bookId));
         }
         return commentRepository.findAllByBookId(bookId);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<Comment> findCommentById(long id) {
+    public Optional<Comment> findCommentById(String id) {
         return commentRepository.findById(id);
     }
 
     @Transactional
     @Override
-    public Comment insert(String text, long bookId) {
+    public Comment insert(String text, String bookId) {
         Optional<Book> book = bookRepository.findById(bookId);
         if (!book.isPresent()) {
-            throw new EntityNotFoundException("Book with id %d not found".formatted(bookId));
+            throw new EntityNotFoundException("Book with id %s not found".formatted(bookId));
         }
         Comment comment = new Comment();
         comment.setText(text);
@@ -51,16 +51,16 @@ public class CommentServiceImpl implements CommentService {
 
     @Transactional
     @Override
-    public void deleteById(long id) {
+    public void deleteById(String id) {
         commentRepository.deleteById(id);
     }
 
     @Transactional
     @Override
-    public Comment update(long id, String text, long bookId) {
+    public Comment update(String id, String text, String bookId) {
         Optional<Book> book = bookRepository.findById(bookId);
         if (!book.isPresent()) {
-            throw new EntityNotFoundException("Book with id %d not found".formatted(bookId));
+            throw new EntityNotFoundException("Book with id %s not found".formatted(bookId));
         }
         Comment comment = commentRepository.findById(id).get();
         comment.setText(text);

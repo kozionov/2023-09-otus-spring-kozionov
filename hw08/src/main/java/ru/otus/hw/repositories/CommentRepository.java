@@ -6,10 +6,10 @@ import ru.otus.hw.models.Comment;
 import java.util.List;
 import java.util.Optional;
 
-public interface CommentRepository extends MongoRepository<Comment, Long> {
+public interface CommentRepository extends MongoRepository<Comment, String> {
 
-    List<Comment> findAllByBookId(long bookId);
+    List<Comment> findAllByBookId(String bookId);
 
-    Optional<Comment> findById(long id);
+    Optional<Comment> findById(String id);
 
 }

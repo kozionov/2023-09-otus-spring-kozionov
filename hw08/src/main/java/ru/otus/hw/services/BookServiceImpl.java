@@ -29,10 +29,10 @@ public class BookServiceImpl implements BookService {
 
     @Transactional(readOnly = true)
     @Override
-    public BookDto findById(long id) {
+    public BookDto findById(String id) {
         Optional<Book> book = bookRepository.findById(id);
         if (!book.isPresent()) {
-            throw new EntityNotFoundException("Book with id %d not found".formatted(id));
+            throw new EntityNotFoundException("Book with id %s not found".formatted(id));
         }
         return modelMapper.map(book.get(), BookDto.class);
     }
@@ -46,27 +46,27 @@ public class BookServiceImpl implements BookService {
 
     @Transactional
     @Override
-    public BookDto insert(String title, long authorId, List<Long> genresIds) {
+    public BookDto insert(String title, String authorId, List<String> genresIds) {
         BookDto book = save(null, title, authorId, genresIds);
         return modelMapper.map(book, BookDto.class);
     }
 
     @Transactional
     @Override
-    public BookDto update(String id, String title, long authorId, List<Long> genresIds) {
+    public BookDto update(String id, String title, String authorId, List<String> genresIds) {
         BookDto book = save(id, title, authorId, genresIds);
         return modelMapper.map(book, BookDto.class);
     }
 
     @Transactional
     @Override
-    public void deleteById(long id) {
+    public void deleteById(String id) {
         bookRepository.deleteById(id);
     }
 
-    private BookDto save(String id, String title, long authorId, List<Long> genresIds) {
+    private BookDto save(String id, String title, String authorId, List<String> genresIds) {
         var author = authorRepository.findById(authorId)
-                .orElseThrow(() -> new EntityNotFoundException("Author with id %d not found".formatted(authorId)));
+                .orElseThrow(() -> new EntityNotFoundException("Author with id %s not found".formatted(authorId)));
         var genres = genreRepository.findAllByIdIn(genresIds);
         if (isEmpty(genres)) {
             throw new EntityNotFoundException("Genres with ids %s not found".formatted(genresIds));

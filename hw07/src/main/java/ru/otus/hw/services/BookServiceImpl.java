@@ -27,7 +27,7 @@ public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
 
-    private final ModelMapper modelMapper = new ModelMapper();
+    private final ModelMapper modelMapper;
 
     @Transactional(readOnly = true)
     @Override

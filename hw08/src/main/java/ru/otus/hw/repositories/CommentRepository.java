@@ -13,6 +13,6 @@ public interface CommentRepository extends MongoRepository<Comment, String> {
 
     Optional<Comment> findById(String id);
 
-    void deleteByBook(Book book);
+    void deleteByBookId(String bookId);
 
 }

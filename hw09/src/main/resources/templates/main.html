@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>List of all books</title>
+    <title>Library</title>
     <style type="text/css">
         body {
             padding: 50px;
@@ -28,6 +28,7 @@
             padding: 0;
             margin: 0;
         }
+
     </style>
 </head>
 <body>
@@ -40,7 +41,6 @@
         <th>Title</th>
         <th>Author</th>
         <th>Genre</th>
-        <th>Action</th>
     </tr>
     </thead>
     <tbody>
@@ -62,5 +62,7 @@
     </tr>
     </tbody>
 </table>
+<br/>
+<a href="create.html" th:href="@{/create}" type="button"><button>Add book</button></a>
 </body>
 </html>

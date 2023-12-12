@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.models.Book;
+import ru.otus.hw.services.AuthorService;
 import ru.otus.hw.services.BookService;
+import ru.otus.hw.services.GenreService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,12 +20,27 @@ import java.util.stream.Collectors;
 public class BookController {
 
     private final BookService service;
+    private final GenreService genreService;
+    private final AuthorService authorService;
 
     @GetMapping("/")
-    public String listPage(Model model) {
+    public String mainPage(Model model) {
         List<BookDto> books = service.findAll();
         model.addAttribute("books", books);
-        return "list";
+        return "main";
+    }
+
+    @GetMapping("/create")
+    public String create(Model model) {
+        model.addAttribute("genres", genreService.findAll());
+        model.addAttribute("authors", authorService.findAll());
+        return "create";
+    }
+
+    @PostMapping("/create")
+    public String createBook(Model model) {
+//        service.insert();
+        return "redirect:/";
     }
 
     @GetMapping("/edit")
@@ -34,7 +51,7 @@ public class BookController {
     }
 
     @PostMapping("/edit")
-    public String savePerson(BookDto book) {
+    public String saveBook(BookDto book) {
         service.update(book.getId(), book.getTitle(), book.getAuthor().getId(), book.getGenres().stream().map(x->x.getId()).collect(Collectors.toList()));
         return "redirect:/";
     }

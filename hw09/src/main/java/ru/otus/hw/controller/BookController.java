@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.otus.hw.dto.BookCreateDto;
 import ru.otus.hw.dto.BookDto;
+import ru.otus.hw.dto.BookUpdateDto;
 import ru.otus.hw.services.AuthorService;
 import ru.otus.hw.services.BookService;
 import ru.otus.hw.services.GenreService;
@@ -49,12 +50,14 @@ public class BookController {
     public String editPage(@RequestParam("id") long id, Model model) {
         BookDto book = service.findById(id);
         model.addAttribute("book", book);
+        model.addAttribute("genres", genreService.findAll());
+        model.addAttribute("authors", authorService.findAll());
         return "edit";
     }
 
     @PostMapping("/edit")
-    public String saveBook(BookDto book) {
-        service.update(book.getId(), book.getTitle(), book.getAuthor().getId(), book.getGenres().stream().map(x -> x.getId()).collect(Collectors.toList()));
+    public String saveBook(@Valid BookUpdateDto bookUpdateDto) {
+        service.update(bookUpdateDto);
         return "redirect:/";
     }
 

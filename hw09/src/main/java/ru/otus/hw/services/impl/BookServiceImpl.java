@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.dto.BookCreateDto;
 import ru.otus.hw.dto.BookDto;
+import ru.otus.hw.dto.BookUpdateDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Genre;
@@ -86,6 +87,14 @@ public class BookServiceImpl implements BookService {
         book = bookRepository.save(book);
         return modelMapper.map(book, BookDto.class);
 
+    }
+
+    @Override
+    public BookDto update(BookUpdateDto bookUpdateDto) {
+        List<Long> genres = new ArrayList<>();
+        genres.add(bookUpdateDto.genreId());
+        BookDto book = save(bookUpdateDto.id(), bookUpdateDto.title(), bookUpdateDto.authorId(), genres);
+        return modelMapper.map(book, BookDto.class);
     }
 
     private BookDto save(long id, String title, long authorId, List<Long> genresIds) {

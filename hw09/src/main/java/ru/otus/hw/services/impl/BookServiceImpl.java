@@ -1,16 +1,20 @@
-package ru.otus.hw.services;
+package ru.otus.hw.services.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.otus.hw.dto.BookCreateDto;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.models.Book;
+import ru.otus.hw.models.Genre;
 import ru.otus.hw.repositories.AuthorRepository;
 import ru.otus.hw.repositories.BookRepository;
 import ru.otus.hw.repositories.GenreRepository;
+import ru.otus.hw.services.BookService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -64,6 +68,24 @@ public class BookServiceImpl implements BookService {
     @Override
     public void deleteById(long id) {
         bookRepository.deleteById(id);
+    }
+
+    @Override
+    public BookDto insert(BookCreateDto bookCreateDto) {
+        Long authorId = bookCreateDto.authorId();
+        var author = authorRepository.findById(authorId)
+                .orElseThrow(() -> new EntityNotFoundException("Create book: Author with id = " + authorId + " is not found"));
+
+        Long genreId = bookCreateDto.genreId();
+        var genre = genreRepository.findById(genreId)
+                .orElseThrow(() -> new EntityNotFoundException("Create book: Genre with id = " + genreId + " is not found"));
+        List<Genre> genres = new ArrayList<>();
+        genres.add(genre);
+
+        var book = new Book(0, bookCreateDto.title(), author, genres);
+        book = bookRepository.save(book);
+        return modelMapper.map(book, BookDto.class);
+
     }
 
     private BookDto save(long id, String title, long authorId, List<Long> genresIds) {

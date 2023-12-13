@@ -1,4 +1,4 @@
-package ru.otus.hw.services;
+package ru.otus.hw.services.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -8,6 +8,7 @@ import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Comment;
 import ru.otus.hw.repositories.BookRepository;
 import ru.otus.hw.repositories.CommentRepository;
+import ru.otus.hw.services.CommentService;
 
 import java.util.List;
 import java.util.Optional;

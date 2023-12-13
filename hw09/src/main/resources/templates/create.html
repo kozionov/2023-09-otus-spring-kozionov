@@ -13,10 +13,6 @@
             width: 100px;
         }
 
-        input:read-only {
-            background: lightgray;
-        }
-
         .row {
             margin-top: 10px;
         }
@@ -24,33 +20,31 @@
 </head>
 <body>
 
-<!-- book creation -->
-<form id="edit-form" action="create.html" th:method="post" th:action="@{/create}">
-    <h3>Book Info:</h3>
+<form id="create-form" action="create.html" th:method="post" th:action="@{/create}" th:object="${bookDto}">
+    <h3>Create new book:</h3>
 
     <div class="row">
-        <label for="book-name-input">Name:</label>
-        <input id="book-name-input" name="name" type="text" value="John Doe" th:value="title"/>
+        <label for="book-title-input">Title:</label>
+        <input id="book-title-input" name="title" type="text" value="Book Title"/>
     </div>
 
     <div class="row">
-        <label for="author">Author:</label>
-        <ul id="author">
-            <li th:each="a : ${authors}" th:text="${a.fullName}">Genre name</li>
-        </ul>
+        <label for="book-author-dropdown">Author:</label>
+        <select id="book-author-dropdown" name="authorId">
+            <option th:each="author : ${authors}" th:value="${author.id}" th:text="${author.fullName}">Authors List</option>
+        </select>
     </div>
 
     <div class="row">
-        <label for="genres">Geners:</label>
-        <ul id="genres">
-            <li th:each="g : ${genres}" th:text="${g.name}">Genre name</li>
-        </ul>
+        <label for="book-genre-dropdown">Genre:</label>
+        <select id="book-genre-dropdown" name="genreId">
+            <option th:each="genre : ${genres}" th:value="${genre.id}" th:text="${genre.name}">Genres List</option>
+        </select>
     </div>
-
 
     <div class="row">
         <button type="submit">Save</button>
-        <a href="list.html" th:href="@{/}"><button type="button">Cancel</button></a>
+        <a href="main.html" th:href="@{/}"><button type="button">Cancel</button></a>
     </div>
 </form>
 

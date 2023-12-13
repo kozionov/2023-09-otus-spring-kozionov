@@ -9,7 +9,6 @@ import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.dto.BookUpdateDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.models.Book;
-import ru.otus.hw.models.Genre;
 import ru.otus.hw.repositories.AuthorRepository;
 import ru.otus.hw.repositories.BookRepository;
 import ru.otus.hw.repositories.GenreRepository;
@@ -73,20 +72,11 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDto insert(BookCreateDto bookCreateDto) {
-        Long authorId = bookCreateDto.authorId();
-        var author = authorRepository.findById(authorId)
-                .orElseThrow(() -> new EntityNotFoundException("Create book: Author with id = " + authorId + " is not found"));
+        List<Long> genres = new ArrayList<>();
+        genres.add(bookCreateDto.genreId());
 
-        Long genreId = bookCreateDto.genreId();
-        var genre = genreRepository.findById(genreId)
-                .orElseThrow(() -> new EntityNotFoundException("Create book: Genre with id = " + genreId + " is not found"));
-        List<Genre> genres = new ArrayList<>();
-        genres.add(genre);
-
-        var book = new Book(0, bookCreateDto.title(), author, genres);
-        book = bookRepository.save(book);
+        var book = save(0, bookCreateDto.title(), bookCreateDto.authorId(), genres);
         return modelMapper.map(book, BookDto.class);
-
     }
 
     @Override

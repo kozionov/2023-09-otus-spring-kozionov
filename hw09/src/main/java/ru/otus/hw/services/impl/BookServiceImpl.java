@@ -14,7 +14,6 @@ import ru.otus.hw.repositories.BookRepository;
 import ru.otus.hw.repositories.GenreRepository;
 import ru.otus.hw.services.BookService;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -72,18 +71,13 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDto insert(BookCreateDto bookCreateDto) {
-        List<Long> genres = new ArrayList<>();
-        genres.add(bookCreateDto.genreId());
-
-        var book = save(0, bookCreateDto.title(), bookCreateDto.authorId(), genres);
+        var book = save(0, bookCreateDto.title(), bookCreateDto.authorId(), bookCreateDto.genreId());
         return modelMapper.map(book, BookDto.class);
     }
 
     @Override
-    public BookDto update(BookUpdateDto bookUpdateDto) {
-        List<Long> genres = new ArrayList<>();
-        genres.add(bookUpdateDto.genreId());
-        BookDto book = save(bookUpdateDto.id(), bookUpdateDto.title(), bookUpdateDto.authorId(), genres);
+    public BookDto update(BookUpdateDto updateDto) {
+        BookDto book = save(updateDto.id(), updateDto.title(), updateDto.authorId(), updateDto.genreId());
         return modelMapper.map(book, BookDto.class);
     }
 

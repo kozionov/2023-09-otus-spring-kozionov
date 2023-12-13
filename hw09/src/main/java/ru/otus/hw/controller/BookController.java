@@ -56,7 +56,7 @@ public class BookController {
     }
 
     @PostMapping("/edit")
-    public String saveBook(@Valid BookUpdateDto bookUpdateDto) {
+    public String editBook(@Valid BookUpdateDto bookUpdateDto) {
         service.update(bookUpdateDto);
         return "redirect:/";
     }

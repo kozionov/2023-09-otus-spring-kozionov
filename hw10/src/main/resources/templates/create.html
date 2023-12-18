@@ -17,10 +17,44 @@
             margin-top: 10px;
         }
     </style>
+    <script src="../static/script.js" th:src="@{/script.js}"></script>
+    <script>
+        window.onload = async () => {
+            const authorsSelect = document.getElementById("book-author-dropdown")
+            const authors = await fetchAllAuthors();
+            authors.forEach(author => {
+                authorsSelect.add(new Option(stringFromAuthor(author), author.id))
+            });
+
+            const genresSelect = document.getElementById("book-genre-dropdown")
+            const genres = await fetchAllGenres();
+            genres.forEach(genre => {
+                genresSelect.add(new Option(stringFromGenre(genre), genre.id))
+            });
+        }
+
+        async function saveBook() {
+            const titleInput = document.getElementById("book-title-input")
+            const authorDropdown = document.getElementById("book-author-dropdown")
+            const genreDropdown = document.getElementById("book-genre-dropdown")
+            const book = { title: titleInput.value, authorId: authorDropdown.value, genreId: genreDropdown.value}
+            const response = await fetch("/api/books", {
+                method: 'POST',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(book)});
+            const status = await response.status
+            if (status === 200) {
+                window.location.replace("/")
+            }
+        }
+    </script>
 </head>
 <body>
 
-<form id="create-form" action="create.html" th:method="post" th:action="@{/create}" th:object="${bookDto}">
+<form id="create-form" action="create.html">
     <h3>Create new book:</h3>
 
     <div class="row">
@@ -31,20 +65,18 @@
     <div class="row">
         <label for="book-author-dropdown">Author:</label>
         <select id="book-author-dropdown" name="authorId">
-            <option th:each="author : ${authors}" th:value="${author.id}" th:text="${author.fullName}">Authors List</option>
         </select>
     </div>
 
     <div class="row">
         <label for="book-genre-dropdown">Genre:</label>
-        <select id="book-genre-dropdown" name="genreId" multiple="multiple">
-            <option th:each="genre : ${genres}" th:value="${genre.id}" th:text="${genre.name}">Genres List</option>
+        <select id="book-genre-dropdown" name="genreId">
         </select>
     </div>
 
     <div class="row">
-        <button type="submit">Save</button>
-        <a href="main.html" th:href="@{/}"><button type="button">Cancel</button></a>
+        <button type="button" onclick="saveBook()">Save</button>
+        <a href="list.html" th:href="@{/}"><button type="button">Cancel</button></a>
     </div>
 </form>
 

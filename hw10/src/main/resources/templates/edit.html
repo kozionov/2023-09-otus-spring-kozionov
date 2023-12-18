@@ -21,42 +21,83 @@
             margin-top: 10px;
         }
     </style>
+    <script src="../static/script.js" th:src="@{/script.js}"></script>
+    <script>
+        window.onload = async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const bookidParam = urlParams.get('id');
+            const book = await fetchBookById(bookidParam);
+
+            const idInput = document.getElementById("book-id-input")
+            idInput.value = book.id
+            const titleInput = document.getElementById("book-title-input")
+            titleInput.value = book.title
+
+            const authorsSelect = document.getElementById("book-author-dropdown");
+            const authors = await fetchAllAuthors();
+            authors.forEach(author => {
+                authorsSelect.add(new Option(stringFromAuthor(author), author.id, false, author.id === book.authorId))
+            });
+
+            const genresSelect = document.getElementById("book-genre-dropdown")
+            const genres = await fetchAllGenres();
+            genres.forEach(genre => {
+                genresSelect.add(new Option(stringFromGenre(genre), genre.id, false, genre.id === book.genreId))
+            });
+        }
+
+        async function updateBook() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const bookidParam = urlParams.get('id');
+
+            const idInput = document.getElementById("book-id-input")
+            const titleInput = document.getElementById("book-title-input")
+            const authorDropdown = document.getElementById("book-author-dropdown")
+            const genreDropdown = document.getElementById("book-genre-dropdown")
+            const book = { id: idInput.value, title: titleInput.value, authorId: authorDropdown.value, genreId: genreDropdown.value}
+            const response = await fetch("/api/books/" + bookidParam, {
+                method: 'PUT',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(book)});
+            const status = await response.status
+            if (status === 200) {
+                window.location.replace("/")
+            }
+        }
+    </script>
 </head>
 <body>
 
-<form id="edit-form" action="edit.html" th:method="put" th:action="@{/edit(id=${book.id})}">
+<form id="edit-form" action="edit.html">
     <h3>Edit book:</h3>
 
     <div class="row">
         <label for="book-id-input">ID:</label>
-        <input id="book-id-input" type="text" readonly="readonly" value="1" th:value="${book.id}"/>
+        <input id="book-id-input" type="text" readonly="readonly"/>
     </div>
 
     <div class="row">
         <label for="book-title-input">Title:</label>
-        <input id="book-title-input" name="title" type="text" value="Book Title" th:value="${book.title}"/>
+        <input id="book-title-input" name="title" type="text"/>
     </div>
 
     <div class="row">
         <label for="book-author-dropdown">Author:</label>
         <select id="book-author-dropdown" name="authorId">
-            <option th:each="author : ${authors}" th:value="${author.id}" th:text="${author.fullName}"
-                    th:selected="(${author.id} == ${book.author.id})">Authors List
-            </option>
         </select>
     </div>
 
     <div class="row">
         <label for="book-genre-dropdown">Genre:</label>
-        <select id="book-genre-dropdown" name="genreId" multiple="multiple">
-            <option th:each="genre : ${genres}" th:value="${genre.id}" th:text="${genre.name}"
-                    >Genres List
-            </option>
+        <select id="book-genre-dropdown" name="genreId">
         </select>
     </div>
 
     <div class="row">
-        <button type="submit">Save</button>
+        <button type="button" onclick="updateBook()">Update</button>
         <a href="list.html" th:href="@{/}">
             <button type="button">Cancel</button>
         </a>

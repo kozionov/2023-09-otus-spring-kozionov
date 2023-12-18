@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Library</title>
+    <title>List of all books</title>
     <style type="text/css">
         body {
             padding: 50px;
@@ -22,16 +22,56 @@
         .books td:last-child, td:first-child {
             width: 50px;
         }
+    </style>
+    <script>
+        window.onload = async () => {
+            const booksTableBody = document.getElementById("booksTableBody")
 
-        ul#remove {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
+            const response = await fetch("/api/books");
+            const books = await response.json();
+            books.forEach(book => {
+                const row = booksTableBody.insertRow()
+                row.id = "bookRow" + book.id
+
+                row.insertCell(0).innerHTML = book.id;
+
+                const cell2 = row.insertCell(1);
+                const detailsLink = document.createElement('a');
+                detailsLink.innerHTML = book.title;
+                detailsLink.href = "/book?id=" + book.id;
+                cell2.appendChild(detailsLink);
+
+                const cell3 = row.insertCell(2);
+                const editLink = document.createElement('a');
+                editLink.innerHTML = "Edit";
+                editLink.href = "/book/edit?id=" + book.id;
+                cell3.appendChild(editLink);
+
+                const cell4 = row.insertCell(3);
+                const deleteButton = document.createElement('button');
+                deleteButton.innerHTML = "Delete";
+                deleteButton.id = "deleteButton" + book.id;
+                deleteButton.onclick = deleteBook;
+                cell4.appendChild(deleteButton);
+            });
         }
 
-    </style>
+        async function deleteBook(pointerEvent) {
+            const bookId = pointerEvent.currentTarget.id
+                .replace("deleteButton", "")
+            const response = await fetch("/api/books/" + bookId, {
+                method: "DELETE"
+            });
+            const result = await response;
+            if (result.status === 200) {
+                const row = document.getElementById("bookRow" + bookId);
+                row.remove();
+            }
+        }
+    </script>
 </head>
 <body>
+<a href="create.html" th:href="@{/book/create}">Create new book</a>
 <h3>Books:</h3>
 
 <table class="books">
@@ -39,32 +79,13 @@
     <tr>
         <th>ID</th>
         <th>Title</th>
-        <th>Author</th>
-        <th>Genre</th>
+        <th>Edit</th>
+        <th>Delete</th>
     </tr>
     </thead>
-    <tbody>
-    <tr th:each="book : ${books}">
-        <td th:text="${book.id}">1</td>
-        <td th:text="${book.title}">Title</td>
-        <td th:text="${book.author.fullName}">Author</td>
-        <td>
-            <ul id="remove">
-                <li th:each="g : ${book.genres}" th:text="${g.name}">Genre name</li>
-            </ul>
-        </td>
-        <td>
-            <a href="edit.html" th:href="@{/edit(id=${book.id})}">Edit</a>
-        </td>
-        <td>
-            <form action=# th:method="post" th:action="@{/delete(id=${book.id})}">
-                <input type="submit" value="Delete">
-            </form>
-        </td>
-    </tr>
+    <tbody id="booksTableBody">
+
     </tbody>
 </table>
-<br/>
-<a href="create.html" th:href="@{/create}" type="button"><button>Add book</button></a>
 </body>
 </html>

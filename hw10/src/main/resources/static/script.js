@@ -1,11 +1,3 @@
-function stringFromAuthor(author) {
-  return "Id: " + author.id + ", forename: " + author.forename + ", surname: " + author.surname;
-}
-
-function stringFromGenre(genre) {
-  return "Id: " + genre.id + ", name: " + genre.name;
-}
-
 async function fetchBookById(id) {
   const response = await fetch("/api/books/" + id);
   const book = await response.json();

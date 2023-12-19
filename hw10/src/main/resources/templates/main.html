@@ -22,6 +22,13 @@
         .books td:last-child, td:first-child {
             width: 50px;
         }
+
+        ul#remove {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
     </style>
     <script>
         window.onload = async () => {
@@ -68,10 +75,10 @@
                 row.remove();
             }
         }
+
     </script>
 </head>
 <body>
-<a href="create.html" th:href="@{/book/create}">Create new book</a>
 <h3>Books:</h3>
 
 <table class="books">
@@ -87,5 +94,7 @@
 
     </tbody>
 </table>
+<br/>
+<a href="create.html" th:href="@{/book/create}" type="button"><button>Add book</button></a>
 </body>
 </html>

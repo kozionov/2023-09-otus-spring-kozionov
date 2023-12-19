@@ -1,5 +1,7 @@
 package ru.otus.hw.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -78,10 +80,13 @@ public class BookControllerTest {
         BookDto bookDto = new BookDto(3L, "New book title", authors.get(0), genres);
         given(bookService.insert(createdBookDto)).willReturn(bookDto);
 
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String json = ow.writeValueAsString(createdBookDto);
+
         mvc.perform(post("/api/books")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"title\":\"New book title\",\"authorId\":\"1\",\"genreId\":\"1\"}"))
+                        .content(json))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(String.valueOf(bookDto.getId()))))
                 .andExpect(content().string(containsString(bookDto.getTitle())));
@@ -96,10 +101,13 @@ public class BookControllerTest {
         BookDto bookDto = new BookDto(1L, "Updated title 1", authors.get(0), genres);
         given(bookService.update(bookUpdateDto)).willReturn(bookDto);
 
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        String json = ow.writeValueAsString(bookUpdateDto);
+
         mvc.perform(put("/api/books/1")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"id\":\"1\",\"title\":\"Updated title\",\"authorId\":\"2\",\"genreId\":\"2\"}"))
+                        .content(json))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(String.valueOf(bookDto.getId()))))
                 .andExpect(content().string(containsString(bookDto.getTitle())));

@@ -11,6 +11,11 @@ public class PagesController {
         return "main";
     }
 
+    @GetMapping("/book")
+    public String bookDetailsPage() {
+        return "details";
+    }
+
     @GetMapping("/book/create")
     public String bookCreatePage() {
         return "create";

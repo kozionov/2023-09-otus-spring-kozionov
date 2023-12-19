@@ -69,15 +69,17 @@ public class BookServiceImpl implements BookService {
         bookRepository.deleteById(id);
     }
 
+    @Transactional
     @Override
     public BookDto insert(BookCreateDto bookCreateDto) {
         var book = save(0, bookCreateDto.title(), bookCreateDto.authorId(), bookCreateDto.genreId());
         return modelMapper.map(book, BookDto.class);
     }
 
+    @Transactional
     @Override
     public BookDto update(BookUpdateDto updateDto) {
-        BookDto book = save(updateDto.id(), updateDto.title(), updateDto.authorId(), updateDto.genreId());
+        var book = save(updateDto.id(), updateDto.title(), updateDto.authorId(), updateDto.genreId());
         return modelMapper.map(book, BookDto.class);
     }
 

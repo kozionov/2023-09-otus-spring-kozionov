@@ -37,7 +37,7 @@
             const authorsSelect = document.getElementById("book-author-dropdown");
             const authors = await fetchAllAuthors();
             authors.forEach(author => {
-                authorsSelect.add(new Option(author.fullName, author.id, false, author.id === book.authorId))
+                authorsSelect.add(new Option(author.fullName, author.id, false, author.id === book.author.id))
             });
 
             const genresSelect = document.getElementById("book-genre-dropdown")

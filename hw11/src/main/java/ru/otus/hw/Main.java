@@ -8,7 +8,6 @@ import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRep
 
 @EnableMongock
 @EnableReactiveMongoRepositories
-@EnableMongoRepositories
 @SpringBootApplication
 public class Main {
 

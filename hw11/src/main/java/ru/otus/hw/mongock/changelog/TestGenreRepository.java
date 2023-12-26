@@ -1,11 +1,11 @@
-package hw.repositories;
+package ru.otus.hw.mongock.changelog;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import ru.otus.hw.models.Genre;
 
 import java.util.List;
 
-public interface GenreRepository extends MongoRepository<Genre, String> {
+public interface TestGenreRepository extends MongoRepository<Genre, String> {
 
     List<Genre> findAll();
 

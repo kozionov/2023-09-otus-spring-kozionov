@@ -3,10 +3,8 @@ spring:
     mongodb:
       port: 0 # when flapdoodle using
       database: library
-  shell:
-    command:
-      version:
-        enabled: false
+  main:
+    allow-bean-definition-overriding: true
 
 de:
   flapdoodle:
@@ -15,8 +13,7 @@ de:
         version: 4.0.2
 
 mongock:
-  #  runner-type: "ApplicationRunner" # default
-  runner-type: "InitializingBean"
+  runner-type: "ApplicationRunner" # default
   change-logs-scan-package:
     - ru.otus.hw.mongock.changelog
   mongo-db:

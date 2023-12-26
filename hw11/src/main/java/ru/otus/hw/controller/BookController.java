@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -62,7 +63,7 @@ public class BookController {
 
     @DeleteMapping("/api/books/{id}")
     public void deleteBook(@PathVariable("id") String id) {
-        bookRepository.deleteById(id);
+        bookRepository.deleteById(id).block();
     }
 
     private BookDto save(String id, String title, String authorId, List<String> genresIds) {

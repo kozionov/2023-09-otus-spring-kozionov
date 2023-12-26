@@ -4,19 +4,22 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.otus.hw.dto.BookCreateDto;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.dto.BookUpdateDto;
-import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.repositories.AuthorRepository;
 import ru.otus.hw.repositories.BookRepository;
 import ru.otus.hw.repositories.GenreRepository;
-import ru.otus.hw.services.BookService;
 
 import java.util.List;
 
@@ -24,10 +27,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookController {
 
-    private final BookService bookService;
     private final BookRepository bookRepository;
+
     private final AuthorRepository authorRepository;
+
     private final GenreRepository genreRepository;
+
     private final ModelMapper modelMapper;
 
     @GetMapping("/api/books")
@@ -57,7 +62,7 @@ public class BookController {
 
     @DeleteMapping("/api/books/{id}")
     public void deleteBook(@PathVariable("id") String id) {
-        bookService.deleteById(id);
+        bookRepository.deleteById(id);
     }
 
     private BookDto save(String id, String title, String authorId, List<String> genresIds) {
@@ -68,15 +73,11 @@ public class BookController {
         return modelMapper.map(book, BookDto.class);
     }
 
-
     private BookDto insert(BookCreateDto bookCreateDto) {
-        var book = save(null, bookCreateDto.title(), bookCreateDto.authorId(), bookCreateDto.genreId());
-        return modelMapper.map(book, BookDto.class);
+        return save(null, bookCreateDto.title(), bookCreateDto.authorId(), bookCreateDto.genreId());
     }
 
-
     private BookDto update(BookUpdateDto updateDto) {
-        var book = save(updateDto.id(), updateDto.title(), updateDto.authorId(), updateDto.genreId());
-        return modelMapper.map(book, BookDto.class);
+        return save(updateDto.id(), updateDto.title(), updateDto.authorId(), updateDto.genreId());
     }
 }

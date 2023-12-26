@@ -7,10 +7,6 @@ import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Comment;
 import ru.otus.hw.models.Genre;
-import ru.otus.hw.repositories.AuthorRepository;
-import ru.otus.hw.repositories.BookRepository;
-import ru.otus.hw.repositories.CommentRepository;
-import ru.otus.hw.repositories.GenreRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +20,8 @@ public class DatabaseChangelog {
     }
 
     @ChangeSet(order = "002", id = "insertData", author = "kozionov")
-    public void insertData(BookRepository bookRepository, AuthorRepository authorRepository,
-                           GenreRepository genreRepository, CommentRepository commentRepository) {
+    public void insertData(TestBookRepository bookRepository, TestAuthorRepository authorRepository,
+                           TestGenreRepository genreRepository, TestCommentRepository commentRepository) {
         Author author1 = new Author("Author_1");
         Author author2 = new Author("Author_2");
         Genre genre1 = new Genre("Genre_1");

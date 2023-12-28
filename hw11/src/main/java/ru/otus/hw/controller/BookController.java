@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,35 +49,33 @@ public class BookController {
     }
 
     @PostMapping("/api/books")
-    public BookDto addBook(@RequestBody @Valid BookCreateDto bookCreateDto) {
-        BookDto book = insert(bookCreateDto);
-        return book;
+    public Mono<BookDto> addBook(@RequestBody @Valid BookCreateDto bookCreateDto) {
+        return insert(bookCreateDto);
     }
 
     @PutMapping("/api/books/{id}")
-    public BookDto editBook(@PathVariable("id") String id, @RequestBody @Valid BookUpdateDto bookUpdateDto) {
-        BookDto book = update(bookUpdateDto);
-        return book;
+    public Mono<BookDto> editBook(@PathVariable("id") String id, @RequestBody @Valid BookUpdateDto bookUpdateDto) {
+        return update(bookUpdateDto);
     }
 
     @DeleteMapping("/api/books/{id}")
-    public void deleteBook(@PathVariable("id") String id) {
-        bookRepository.deleteById(id).block();
+    public Mono<Void> deleteBook(@PathVariable("id") String id) {
+        return bookRepository.deleteById(id);
     }
 
-    private BookDto save(String id, String title, String authorId, List<String> genresIds) {
+    private Mono<BookDto> save(String id, String title, String authorId, List<String> genresIds) {
         var author = authorRepository.findById(authorId).block();
         var genres = genreRepository.findAllByIdIn(genresIds).buffer().blockFirst();
         var book = new Book(id, title, author, genres);
-        book = bookRepository.save(book).block();
-        return modelMapper.map(book, BookDto.class);
+        return bookRepository.save(book)
+                .map(e -> modelMapper.map(e, BookDto.class));
     }
 
-    private BookDto insert(BookCreateDto bookCreateDto) {
+    private Mono<BookDto> insert(BookCreateDto bookCreateDto) {
         return save(null, bookCreateDto.title(), bookCreateDto.authorId(), bookCreateDto.genreId());
     }
 
-    private BookDto update(BookUpdateDto updateDto) {
+    private Mono<BookDto> update(BookUpdateDto updateDto) {
         return save(updateDto.id(), updateDto.title(), updateDto.authorId(), updateDto.genreId());
     }
 }

@@ -16,11 +16,14 @@ import reactor.core.publisher.Mono;
 import ru.otus.hw.dto.BookCreateDto;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.dto.BookUpdateDto;
+import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
+import ru.otus.hw.models.Genre;
 import ru.otus.hw.repositories.AuthorRepository;
 import ru.otus.hw.repositories.BookRepository;
 import ru.otus.hw.repositories.GenreRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -64,11 +67,16 @@ public class BookController {
     }
 
     private Mono<BookDto> save(String id, String title, String authorId, List<String> genresIds) {
-        var author = authorRepository.findById(authorId).block();
-        var genres = genreRepository.findAllByIdIn(genresIds).buffer().blockFirst();
-        var book = new Book(id, title, author, genres);
-        return bookRepository.save(book)
-                .map(e -> modelMapper.map(e, BookDto.class));
+        authorRepository.findById(authorId).subscribe(author ->
+        {
+            genreRepository.findAllByIdIn(genresIds).buffer().subscribe(genres -> {
+                var book = new Book(id, title, author, genres);
+                bookRepository.save(book)
+                        .map(e -> modelMapper.map(e, BookDto.class))
+                        .subscribe();
+            });
+        });
+        return Mono.empty();
     }
 
     private Mono<BookDto> insert(BookCreateDto bookCreateDto) {

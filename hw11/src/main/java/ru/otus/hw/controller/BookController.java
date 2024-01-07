@@ -64,13 +64,11 @@ public class BookController {
     }
 
     private Mono<BookDto> save(String id, String title, String authorId, List<String> genresIds) {
-        return Flux.zip(genreRepository.findAllByIdIn(genresIds).buffer(),
-                authorRepository.findById(authorId), (genres, author) -> {
-                    return new Book(id, title, author, genres);
-                })
-                .next()
+        var genresMono = genreRepository.findAllByIdIn(genresIds).collectList();
+        var authorMono = authorRepository.findById(authorId);
+        return Mono.zip(genresMono, authorMono, (genres, author) -> new Book(id, title, author, genres))
                 .flatMap(bookRepository::save)
-                .map(book->modelMapper.map(book, BookDto.class));
+                .map(book -> modelMapper.map(book, BookDto.class));
     }
 
     private Mono<BookDto> insert(BookCreateDto bookCreateDto) {

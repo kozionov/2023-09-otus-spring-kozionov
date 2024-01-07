@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Book details</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+    </style>
+    <script src="../static/script.js" th:src="@{/script.js}"></script>
+    <script>
+        window.onload = async () => {
+            const lis = document.getElementById("bookUl").getElementsByTagName("li")
+            const urlParams = new URLSearchParams(window.location.search);
+            const bookidParam = urlParams.get('id');
+
+            const book = await fetchBookById(bookidParam);
+           
+            lis[0].innerHTML += book.id;
+            lis[1].innerHTML += book.title;
+            lis[2].innerHTML += book.author.fullName;
+            let genres = '';
+            book.genres.forEach((element) => genres = genres + element.name + ' ');
+            lis[3].innerHTML += genres;
+        }
+    </script>
+</head>
+<body>
+
+<h3>Book Info:</h3>
+<ul id="bookUl">
+    <li>ID: </li>
+    <li>Title: </li>
+    <li>Author: </li>
+    <li>Genres: </li>
+</ul>
+<a href="list.html" th:href="@{/}">
+    <button type="button">Back to list</button>
+</a>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Create book</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+    </style>
+    <script src="../static/script.js" th:src="@{/script.js}"></script>
+    <script>
+        window.onload = async () => {
+            const authorsSelect = document.getElementById("book-author-dropdown")
+            const authors = await fetchAllAuthors();
+            authors.forEach(author => {
+                authorsSelect.add(new Option(author.fullName, author.id))
+            });
+
+            const genresSelect = document.getElementById("book-genre-dropdown")
+            const genres = await fetchAllGenres();
+            genres.forEach(genre => {
+                genresSelect.add(new Option(genre.name, genre.id))
+            });
+        }
+
+        async function saveBook() {
+        console.log(getSelectValues(document.getElementById("book-genre-dropdown")));
+            const titleInput = document.getElementById("book-title-input")
+            const authorDropdown = document.getElementById("book-author-dropdown")
+            const genreDropdown = document.getElementById("book-genre-dropdown")
+            const book = { title: titleInput.value, authorId: authorDropdown.value, genreId: getSelectValues(genreDropdown)}
+            const response = await fetch("/api/books", {
+                method: 'POST',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(book)});
+            const status = await response.status
+            if (status === 200) {
+                window.location.replace("/")
+            }
+        }
+
+        function getSelectValues(select) {
+          var result = [];
+          var options = select && select.options;
+          var opt;
+
+          for (var i=0, iLen=options.length; i<iLen; i++) {
+            opt = options[i];
+
+            if (opt.selected) {
+              result.push(opt.value || opt.text);
+            }
+          }
+          return result;
+        }
+    </script>
+</head>
+<body>
+
+<form id="create-form" action="create.html">
+    <h3>Create new book:</h3>
+
+    <div class="row">
+        <label for="book-title-input">Title:</label>
+        <input id="book-title-input" name="title" type="text" value="Book Title"/>
+    </div>
+
+    <div class="row">
+        <label for="book-author-dropdown">Author:</label>
+        <select id="book-author-dropdown" name="authorId">
+        </select>
+    </div>
+
+    <div class="row">
+        <label for="book-genre-dropdown">Genre:</label>
+        <select id="book-genre-dropdown" name="genreId" multiple="multiple">
+        </select>
+    </div>
+
+    <div class="row">
+        <button type="button" onclick="saveBook()">Save</button>
+        <a href="list.html" th:href="@{/}"><button type="button">Cancel</button></a>
+    </div>
+</form>
+
+</body>
+</html>

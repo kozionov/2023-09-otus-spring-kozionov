@@ -18,3 +18,6 @@ values (1, 1),   (1, 2),
 
 insert into comments(text, book_id)
 values ('Comment_1', 1), ('Comment_2', 1), ('Comment_2', 2), ('Comment_3', 3);
+
+insert into users(username, password, role)
+values ('admin', 'admin', 'ADMIN'), ('user', 'user', 'USER');

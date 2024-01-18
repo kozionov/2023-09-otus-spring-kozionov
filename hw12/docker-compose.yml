@@ -9,7 +9,8 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
     volumes:
-      - "postgres_data:/var/lib/postgresql/data"
+      - "database:/var/lib/postgresql/data"
+#      - "postgres_data:/var/lib/postgresql/data"
     ports:
       - "5432"
 
@@ -21,4 +22,7 @@ services:
     depends_on:
       - db
 volumes:
-  postgres_data:
+#  postgres_data:
+  database:
+    name: myAppDbVolume
+    external: true

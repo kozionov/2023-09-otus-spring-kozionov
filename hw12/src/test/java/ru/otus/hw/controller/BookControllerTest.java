@@ -1,13 +1,17 @@
 package ru.otus.hw.controller;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Genre;
@@ -19,13 +23,13 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayName("BookController should")
-@WebMvcTest(BookController.class)
-@WithMockUser(username = "admin", authorities = {"ADMIN", "USER"})
+@SpringBootTest
 public class BookControllerTest {
 
     private static List<BookDto> bookDtos;
@@ -34,8 +38,7 @@ public class BookControllerTest {
 
     private static List<Genre> genres;
 
-    @Autowired
-    private MockMvc mvc;
+    private MockMvc mockMvc;
 
     @MockBean
     private BookService bookService;
@@ -45,6 +48,12 @@ public class BookControllerTest {
 
     @MockBean
     private GenreService genreService;
+
+    @Autowired
+    protected WebApplicationContext wac;
+
+    @Autowired
+    private FilterChainProxy springSecurityFilterChain;
 
     @BeforeAll
     public static void before() {
@@ -63,34 +72,60 @@ public class BookControllerTest {
         );
     }
 
-    @Test
-    @DisplayName("correctly return books page")
-    void shouldReturnBooksPage() throws Exception {
-        given(bookService.findAll()).willReturn(bookDtos);
+    @BeforeEach
+    void setup() {
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(wac)
+                .apply(springSecurity(springSecurityFilterChain))
+                .build();
+    }
 
-        mvc.perform(get("/"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString(bookDtos.get(0).getTitle())))
-                .andExpect(content().string(containsString(bookDtos.get(1).getTitle())));
+
+    @Test
+    @DisplayName("have access to url with authenticated user")
+    @WithMockUser(username = "admin", authorities = {"ADMIN", "USER"})
+    void shouldHaveAccessWithUser() throws Exception {
+        given(bookService.findAll()).willReturn(bookDtos);
+        given(authorService.findAll()).willReturn(authors);
+        given(genreService.findAll()).willReturn(genres);
+        given(bookService.findById(1L)).willReturn(bookDtos.get(0));
+
+        mockMvc.perform(get("/")).andExpect(status().isOk());
+        mockMvc.perform(get("/edit?id=1")).andExpect(status().isOk());
+        mockMvc.perform(get("/create")).andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("not have access to url without authenticated user")
+    void shouldNotHaveAccessWithoutUser() throws Exception {
+        given(bookService.findAll()).willReturn(bookDtos);
+        given(authorService.findAll()).willReturn(authors);
+        given(genreService.findAll()).willReturn(genres);
+        given(bookService.findById(1L)).willReturn(bookDtos.get(0));
+
+        mockMvc.perform(get("/")).andExpect(status().isOk());
+        mockMvc.perform(get("/edit?id=1")).andExpect(status().is(302));
+        mockMvc.perform(get("/create")).andExpect(status().is(302));
     }
 
     @Test
     @DisplayName("correctly return book details page")
+    @WithMockUser(username = "admin", authorities = {"ADMIN", "USER"})
     void shouldReturnBookDetailsPage() throws Exception {
         given(bookService.findById(1L)).willReturn(bookDtos.get(0));
 
-        mvc.perform(get("/edit?id=1"))
+        mockMvc.perform(get("/edit?id=1"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(bookDtos.get(0).getTitle())));
     }
 
     @Test
     @DisplayName("correctly return create book page")
+    @WithMockUser(username = "admin", authorities = {"ADMIN", "USER"})
     void shouldReturnCreateBookPage() throws Exception {
         given(authorService.findAll()).willReturn(authors);
         given(genreService.findAll()).willReturn(genres);
 
-        mvc.perform(get("/create"))
+        mockMvc.perform(get("/create"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(authors.get(0).getFullName())))
                 .andExpect(content().string(containsString(authors.get(1).getFullName())))

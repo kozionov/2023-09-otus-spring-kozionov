@@ -1,8 +1,9 @@
 version: '3.8'
 services:
-  postgres:
+  db:
     image: postgres
     restart: always
+    container_name: db
     environment:
       POSTGRES_DB: test
       POSTGRES_USER: admin
@@ -10,13 +11,14 @@ services:
     volumes:
       - "postgres_data:/var/lib/postgresql/data"
     ports:
-      - "5432:5432"
-    links:
-      - jdk
+      - "5432"
+
   jdk:
     image: hello-world
+    container_name: app
     ports:
       - "8080:8080"
-
+    depends_on:
+      - db
 volumes:
   postgres_data:

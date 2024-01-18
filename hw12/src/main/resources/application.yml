@@ -1,6 +1,10 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:maindb
+    platform: postgres
+    url: jdbc:postgresql://localhost:5432/test
+    username: admin
+    password: admin
+    driverClassName: org.postgresql.Driver
   liquibase:
     enabled: true
   jpa:

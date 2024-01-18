@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: test
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - "postgres_data:/var/lib/postgresql/data"
+    ports:
+      - "5432:5432"
+    links:
+      - jdk
+  jdk:
+    image: hello-world
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres_data:

@@ -20,7 +20,8 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((request) -> request
                         .requestMatchers("/").permitAll()
-                        .requestMatchers("/create", "/edit", "/delete").authenticated()
+                        .requestMatchers("/create").hasAnyRole( "ADMIN", "USER" )
+                        .requestMatchers("/edit", "/delete").hasAnyRole( "ADMIN" )
                         .anyRequest().permitAll()
                 )
                 .formLogin(Customizer.withDefaults())

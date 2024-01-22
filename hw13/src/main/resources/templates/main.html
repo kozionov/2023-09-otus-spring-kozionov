@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
     <meta charset="UTF-8"/>
     <title>Library</title>
@@ -32,6 +33,10 @@
     </style>
 </head>
 <body>
+
+<div sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_USER')">
+    <a href="/logout">Выход</a>
+</div>
 
 <h3>Books:</h3>
 

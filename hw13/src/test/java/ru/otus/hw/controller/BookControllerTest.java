@@ -6,7 +6,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -86,8 +85,22 @@ public class BookControllerTest {
 
     @Test
     @DisplayName("have access to url with authenticated user")
-    @WithMockUser(username = "admin", authorities = {"ADMIN", "USER"})
-    void shouldHaveAccessWithUser() throws Exception {
+    @WithMockUser(username = "admin", authorities = {"ROLE_USER"})
+    void shouldHaveAccessWithRoleUser() throws Exception {
+        given(bookService.findAll()).willReturn(bookDtos);
+        given(authorService.findAll()).willReturn(authors);
+        given(genreService.findAll()).willReturn(genres);
+        given(bookService.findById(1L)).willReturn(bookDtos.get(0));
+
+        mockMvc.perform(get("/")).andExpect(status().isOk());
+        mockMvc.perform(get("/edit?id=1")).andExpect(status().is(403));
+        mockMvc.perform(get("/create")).andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("have access to url with authenticated user")
+    @WithMockUser(username = "admin", authorities = {"ROLE_ADMIN"})
+    void shouldHaveAccessWithRoleAdmin() throws Exception {
         given(bookService.findAll()).willReturn(bookDtos);
         given(authorService.findAll()).willReturn(authors);
         given(genreService.findAll()).willReturn(genres);
@@ -113,7 +126,7 @@ public class BookControllerTest {
 
     @Test
     @DisplayName("correctly return book details page")
-    @WithMockUser(username = "admin", authorities = {"ADMIN", "USER"})
+    @WithMockUser(username = "admin", authorities = {"ROLE_ADMIN"})
     void shouldReturnBookDetailsPage() throws Exception {
         given(bookService.findById(1L)).willReturn(bookDtos.get(0));
 
@@ -124,7 +137,7 @@ public class BookControllerTest {
 
     @Test
     @DisplayName("correctly return create book page")
-    @WithMockUser(username = "admin", authorities = {"ADMIN", "USER"})
+    @WithMockUser(username = "admin", authorities = {"ROLE_ADMIN"})
     void shouldReturnCreateBookPage() throws Exception {
         given(authorService.findAll()).willReturn(authors);
         given(genreService.findAll()).willReturn(genres);

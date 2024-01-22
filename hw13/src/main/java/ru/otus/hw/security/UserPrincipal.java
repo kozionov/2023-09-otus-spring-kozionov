@@ -19,7 +19,7 @@ public class UserPrincipal implements UserDetails {
         return Collections.singleton(new GrantedAuthority() {
             @Override
             public String getAuthority() {
-                return "ROLE_"+user.getRole();
+                return "ROLE_" + user.getRole();
             }
         });
     }

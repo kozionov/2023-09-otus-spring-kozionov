@@ -1,10 +1,56 @@
 spring:
-  datasource:
-    url: jdbc:h2:mem:maindb
-  liquibase:
-    enabled: true
-  jpa:
-    generate-ddl: false
-    hibernate:
-      ddl-auto: none
-    show-sql: true
+  main:
+    allow-circular-references: true
+  batch:
+    job:
+      enabled: false
+  shell:
+    interactive:
+      enabled: true
+    noninteractive:
+      enabled: false
+    command:
+      version:
+        enabled: false
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: library
+#      auto-index-creation: true
+#  datasource:
+#    url: jdbc:h2:mem:library
+#    driverClassName: org.h2.Driver
+#    username: sa
+#    password:
+#  sql:
+#    init:
+#      mode: always
+#      data-locations: data.sql
+#      schema-locations: schema.sql
+#  h2:
+#    console:
+#      enabled: true
+#      path: /h2-console
+#  jpa:
+#    generate-ddl: true
+#    hibernate:
+#      ddl-auto: validate
+#    properties:
+#      hibernate:
+#        format_sql: false
+#    show-sql: true
+
+mongock:
+  runner-type: "InitializingBean"
+  change-logs-scan-package:
+    - ru.otus.hw.changelog
+  mongo-db:
+    write-concern:
+      journal: false
+    read-concern: local
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 4.0.2

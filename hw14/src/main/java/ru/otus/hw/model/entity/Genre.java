@@ -12,9 +12,10 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "genres")
+@SequenceGenerator(name = "genres_id_seq", sequenceName = "genres_id_seq", allocationSize = 1)
 public class Genre {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "genres_id_seq")
     @Column(name = "genre_id")
     private Long id;
 

@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "comments")
-public class Comment {
+public class CommentDoc {
 
     @Id
     private String id;
@@ -21,9 +21,9 @@ public class Comment {
     private String text;
 
     @DBRef
-    private Book book;
+    private BookDoc book;
 
-    public Comment(String text, Book book) {
+    public CommentDoc(String text, BookDoc book) {
         this.text = text;
         this.book = book;
     }

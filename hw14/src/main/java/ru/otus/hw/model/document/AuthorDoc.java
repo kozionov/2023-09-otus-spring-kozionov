@@ -11,15 +11,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "genres")
-public class Genre {
+@Document(collection = "authors")
+public class AuthorDoc {
 
     @Id
     private String id;
+    private String firstName;
+    private String lastName;
 
-    private String name;
-
-    public Genre(String name) {
-        this.name = name;
+    public AuthorDoc(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 }

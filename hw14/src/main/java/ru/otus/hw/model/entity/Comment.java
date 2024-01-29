@@ -12,9 +12,10 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "comments")
+@SequenceGenerator(name = "comments_id_seq", sequenceName = "comments_id_seq", allocationSize = 1)
 public class Comment {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comments_id_seq")
     private Long id;
 
     @Column(name = "text", nullable = false, length = 1000)

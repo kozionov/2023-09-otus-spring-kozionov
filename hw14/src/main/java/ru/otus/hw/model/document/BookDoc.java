@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "books")
-public class Book {
+public class BookDoc {
 
     @Id
     private String id;
@@ -25,12 +25,12 @@ public class Book {
     private String description;
 
     @DBRef
-    private Author author;
+    private AuthorDoc author;
 
     @DBRef
-    private List<Genre> genres;
+    private List<GenreDoc> genres;
 
-    public Book(String title, String description, Author author, List<Genre> genres) {
+    public BookDoc(String title, String description, AuthorDoc author, List<GenreDoc> genres) {
         this.title = title;
         this.description = description;
         this.author = author;

@@ -17,9 +17,10 @@ import java.util.Set;
 @Entity
 @Table(name = "books")
 @NamedEntityGraph(name = "book-author-entity-graph", attributeNodes = {@NamedAttributeNode("author")})
+@SequenceGenerator(name = "books_id_seq", sequenceName = "books_id_seq", allocationSize = 1)
 public class Book {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "books_id_seq")
     private Long id;
 
     @Column(name = "title", nullable = false, length = 500)

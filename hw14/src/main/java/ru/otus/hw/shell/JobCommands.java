@@ -1,6 +1,7 @@
 package ru.otus.hw.shell;
 
 import lombok.RequiredArgsConstructor;
+import org.h2.tools.Console;
 import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.shell.Availability;
 import org.springframework.shell.standard.ShellComponent;
@@ -40,4 +41,8 @@ public class JobCommands {
         return this.executionId == null ? Availability.unavailable(errorMessage) : Availability.available();
     }
 
+    @ShellMethod(value = "Rjycjkm", key = {"console"})
+    public void console() throws Exception {
+        Console.main();
+    }
 }

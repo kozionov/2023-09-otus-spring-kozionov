@@ -7,8 +7,6 @@ import lombok.Setter;
 
 import java.util.Set;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
 public class BookDto {
@@ -23,4 +21,11 @@ public class BookDto {
 
     private Set<String> genresIds;
 
+    public BookDto(String id, String title, String description, String authorId, Set<String> genresIds) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.authorId = authorId;
+        this.genresIds = genresIds;
+    }
 }

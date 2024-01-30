@@ -16,7 +16,9 @@ public class AuthorDoc {
 
     @Id
     private String id;
+
     private String firstName;
+
     private String lastName;
 
     public AuthorDoc(String firstName, String lastName) {

@@ -15,9 +15,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 import ru.otus.hw.model.document.CommentDoc;
-import ru.otus.hw.model.document.CommentDoc;
 import ru.otus.hw.model.dto.CommentDto;
-import ru.otus.hw.model.entity.Comment;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
@@ -80,7 +78,7 @@ public class CommentMigrationStepConfig {
 
     @Bean
     public Step commentMigrationStep(MongoItemReader<CommentDoc> mongoCommentReader,
-            CompositeItemWriter<CommentDto> commentCompositeItemWriter) {
+                                     CompositeItemWriter<CommentDto> commentCompositeItemWriter) {
         return new StepBuilder("commentMigrationStep", jobRepository)
                 .<CommentDoc, CommentDto>chunk(1, platformTransactionManager)
                 .reader(mongoCommentReader)

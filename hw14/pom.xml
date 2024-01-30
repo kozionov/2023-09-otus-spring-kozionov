@@ -73,7 +73,11 @@
             <artifactId>de.flapdoodle.embed.mongo.spring30x</artifactId>
             <version>4.7.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>3.2.0</version>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

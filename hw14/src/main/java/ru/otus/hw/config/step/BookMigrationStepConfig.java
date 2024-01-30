@@ -1,10 +1,12 @@
 package ru.otus.hw.config.step;
 
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.Chunk;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.data.MongoItemReader;
 import org.springframework.batch.item.data.builder.MongoItemReaderBuilder;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
@@ -13,16 +15,14 @@ import org.springframework.batch.item.support.CompositeItemWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 import ru.otus.hw.model.document.BookDoc;
-import ru.otus.hw.model.entity.Author;
-import ru.otus.hw.model.entity.Book;
-import ru.otus.hw.model.entity.Genre;
+import ru.otus.hw.model.document.GenreDoc;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Configuration
 @RequiredArgsConstructor
@@ -33,6 +33,11 @@ public class BookMigrationStepConfig {
     private final JobRepository jobRepository;
 
     private final PlatformTransactionManager transactionManager;
+
+    @Bean
+    public ModelMapper modelMapper(){
+        return new ModelMapper();
+    }
 
     @Bean
     public MongoItemReader<BookDoc> bookMongoItemReader(MongoTemplate mongoTemplate) {
@@ -56,30 +61,11 @@ public class BookMigrationStepConfig {
     }
 
     @Bean
-    public JdbcBatchItemWriter<BookDoc> bookJdbcBatchItemWriter() {
-        JdbcBatchItemWriter<BookDoc> writer = new JdbcBatchItemWriter<>();
-        writer.setItemPreparedStatementSetter((book, statement) -> {
-            statement.setString(1, book.getTitle());
-            statement.setString(2, book.getDescription());
-            statement.setString(3, String.valueOf(book.getId()));
-//            statement.setString(4, String.valueOf(book.getGenres().stream().findFirst().get().getId()));
-            statement.setString(4, String.valueOf(book.getAuthor().getId()));
-        });
-        writer.setSql("INSERT INTO books(title, description, id, /*genre_id,*/ author_id) " +
-                "VALUES (?, ?, " +
-                "(SELECT id_postgres FROM temp_book_cross_ids WHERE id_mongo = ?), " +
-//                "(SELECT id_postgres FROM temp_genre_cross_ids WHERE id_mongo = ?), " +
-                "(SELECT id_postgres FROM temp_author_cross_ids WHERE id_mongo = ?))");
-        writer.setDataSource(dataSource);
-        return writer;
-    }
-
-    @Bean
     public CompositeItemWriter<BookDoc> bookCompositeItemWriter(
             JdbcBatchItemWriter<BookDoc> bookInsertTempTable,
-            JdbcBatchItemWriter<BookDoc> bookJdbcBatchItemWriter) {
+            ItemWriter<BookDoc> personWriter) {
         CompositeItemWriter<BookDoc> writer = new CompositeItemWriter<>();
-        writer.setDelegates(List.of(bookInsertTempTable, bookJdbcBatchItemWriter));
+        writer.setDelegates(List.of(bookInsertTempTable, personWriter));
         return writer;
     }
 
@@ -100,6 +86,38 @@ public class BookMigrationStepConfig {
                 .writer(bookCompositeItemWriter)
                 .allowStartIfComplete(true)
                 .build();
+    }
+
+
+    @Bean
+    public PersonWriter personWriter() {
+        return new PersonWriter(dataSource);
+    }
+
+    public class PersonWriter implements ItemWriter<BookDoc> {
+
+        private JdbcTemplate jdbcTemplate;
+
+        public PersonWriter(DataSource dataSource) {
+            this.jdbcTemplate = new JdbcTemplate(dataSource);
+        }
+
+        @Override
+        public void write(Chunk<? extends BookDoc> items) {
+            for (BookDoc person : items) {
+                jdbcTemplate.update("INSERT INTO books(title, description, id,  author_id) " +
+                        "VALUES (?, ?, " +
+                        "(SELECT id_postgres FROM temp_book_cross_ids WHERE id_mongo = ?), " +
+                        "(SELECT id_postgres FROM temp_author_cross_ids WHERE id_mongo = ?))", person.getTitle(), person.getDescription(), person.getId(), person.getAuthor().getId());
+                for (GenreDoc address : person.getGenres()) {
+                    jdbcTemplate.update("INSERT INTO books_genres(book_id, genre_id) " +
+                            "VALUES (" +
+                            "(SELECT id_postgres FROM temp_book_cross_ids WHERE id_mongo = ?), " +
+                            "(SELECT id_postgres FROM temp_genre_cross_ids WHERE id_mongo = ?)) ", person.getId(), address.getId());
+                }
+            }
+        }
+
     }
 
 }

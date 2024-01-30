@@ -30,7 +30,7 @@ public class JobConfig {
     private PlatformTransactionManager platformTransactionManager;
 
     @Bean
-    public Job migrateLibraryDatabase(Step authorMigrationStep, Step genreMigrationStep) {
+    public Job migrateLibraryDatabase(Step authorMigrationStep, Step genreMigrationStep, Step bookMigrationStep) {
         return new JobBuilder(JOB_NAME, jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .start(createTempAuthorCrossIdTable(jobRepository))
@@ -39,7 +39,7 @@ public class JobConfig {
                 .next(createTempCommentCrossIdTable(jobRepository))
                 .next(authorMigrationStep)
                 .next(genreMigrationStep)
-//                .next(bookMigrationStep)
+                .next(bookMigrationStep)
 //                .next(commentMigrationStep)
                 .next(dropTempAuthorCrossIdTable(jobRepository))
                 .next(dropTempGenreCrossIdTable(jobRepository))

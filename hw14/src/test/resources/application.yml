@@ -1,11 +1,53 @@
 spring:
+  main:
+    allow-circular-references: true
+  batch:
+    job:
+      enabled: false
+  shell:
+    command:
+      version:
+        enabled: false
+    interactive:
+      enabled: false
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: library
+
   datasource:
     url: jdbc:h2:mem:testdb
-  liquibase:
-    enabled: true
-    change-log: classpath:/db/changelog/db.changelog-test.yaml
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+  sql:
+    init:
+      mode: always
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
   jpa:
-    generate-ddl: false
+    generate-ddl: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: false
     show-sql: true
+
+mongock:
+  runner-type: "InitializingBean"
+  change-logs-scan-package:
+    - ru.otus.hw.changelog
+  mongo-db:
+    write-concern:
+      journal: false
+    read-concern: local
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 4.0.2

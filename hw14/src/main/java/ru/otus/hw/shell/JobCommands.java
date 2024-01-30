@@ -41,7 +41,7 @@ public class JobCommands {
         return this.executionId == null ? Availability.unavailable(errorMessage) : Availability.available();
     }
 
-    @ShellMethod(value = "Rjycjkm", key = {"console"})
+    @ShellMethod(value = "Show h2 console", key = {"console"})
     public void console() throws Exception {
         Console.main();
     }

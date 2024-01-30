@@ -17,7 +17,7 @@ spring:
       host: localhost
       port: 27017
       database: library
-#      auto-index-creation: true
+
   datasource:
     url: jdbc:h2:mem:library
     driverClassName: org.h2.Driver

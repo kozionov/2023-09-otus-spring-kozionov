@@ -57,16 +57,16 @@ public class BookMigrationStepConfig {
     }
 
     @Bean
-    public PersonWriter personWriter() {
-        return new PersonWriter(dataSource);
+    public BookWriter bookWriter() {
+        return new BookWriter(dataSource);
     }
 
     @Bean
     public CompositeItemWriter<BookDto> bookCompositeItemWriter(
             JdbcBatchItemWriter<BookDto> bookInsertTempTable,
-            ItemWriter<BookDto> personWriter) {
+            ItemWriter<BookDto> bookWriter) {
         CompositeItemWriter<BookDto> writer = new CompositeItemWriter<>();
-        writer.setDelegates(List.of(bookInsertTempTable, personWriter));
+        writer.setDelegates(List.of(bookInsertTempTable, bookWriter));
         return writer;
     }
 
@@ -90,11 +90,11 @@ public class BookMigrationStepConfig {
     }
 
 
-    class PersonWriter implements ItemWriter<BookDto> {
+    class BookWriter implements ItemWriter<BookDto> {
 
         private JdbcTemplate jdbcTemplate;
 
-        public PersonWriter(DataSource dataSource) {
+        public BookWriter(DataSource dataSource) {
             this.jdbcTemplate = new JdbcTemplate(dataSource);
         }
 

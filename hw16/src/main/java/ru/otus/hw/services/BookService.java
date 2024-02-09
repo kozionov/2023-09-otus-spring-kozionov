@@ -21,4 +21,5 @@ public interface BookService {
 
     BookDto update(BookUpdateDto bookUpdateDto);
 
+    long count();
 }

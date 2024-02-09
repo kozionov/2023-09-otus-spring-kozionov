@@ -44,6 +44,12 @@ public class BookServiceImpl implements BookService {
 
     @Transactional(readOnly = true)
     @Override
+    public long count() {
+        return bookRepository.count();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
     public List<BookDto> findAll() {
         List<Book> books = bookRepository.findAll();
         return books.stream().map(b -> modelMapper.map(b, BookDto.class)).collect(Collectors.toList());

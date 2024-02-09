@@ -10,13 +10,12 @@ import ru.otus.hw.services.BookService;
 @Component
 @RequiredArgsConstructor
 public class LibraryHealthIndicator implements HealthIndicator {
-    private static final int HOURS_COUNT = 12;
 
     private final BookService bookService;
 
     @Override
     public Health health() {
-        long bookCount = bookService.findAll().stream().count();
+        long bookCount = bookService.count();
         if (bookCount == 0) {
             String message = String.format("В библиотеке отсутствуют книги");
             return Health.down()

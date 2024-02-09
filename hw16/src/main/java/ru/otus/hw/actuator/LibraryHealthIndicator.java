@@ -17,13 +17,13 @@ public class LibraryHealthIndicator implements HealthIndicator {
     public Health health() {
         long bookCount = bookService.count();
         if (bookCount == 0) {
-            String message = String.format("В библиотеке отсутствуют книги");
+            String message = "В библиотеке отсутствуют книги";
             return Health.down()
                     .status(Status.DOWN)
                     .withDetail("message", message)
                     .build();
         } else {
-            String message = String.format("Все в порядке. Есть что почитать.");
+            String message = "Все в порядке. Есть что почитать.";
             return Health.up()
                     .withDetail("message", message)
                     .build();

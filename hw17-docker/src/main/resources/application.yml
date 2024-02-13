@@ -34,8 +34,6 @@ management:
     defaults:
       enabled: true
 logging:
-  file:
-    name: ./logs/library-log.log
   level:
     root: INFO
     org:

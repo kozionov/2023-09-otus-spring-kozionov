@@ -27,8 +27,6 @@ management:
     health:
       # display health checks with details
       show-details: always
-    logfile:
-      external-file: ${logging.file.name}
   # enable all default health check
   health:
     defaults:

@@ -38,12 +38,9 @@ public class GenreServiceImpl implements GenreService {
         Random rand = new Random();
         int randomNum = rand.nextInt(3) + 1;
         System.out.println("randomNum = " + randomNum);
-        if(randomNum == 3) {
-            System.out.println("It is a chance for demonstrating Hystrix action");
-
-                System.out.println("Start sleeping...." + System.currentTimeMillis());
-                throw new RuntimeException();
-
+        if (randomNum == 3) {
+            System.out.println("It is a chance for demonstrating CircuitBreaker action");
+            throw new RuntimeException();
         }
     }
 }

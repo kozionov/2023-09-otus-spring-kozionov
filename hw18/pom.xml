@@ -10,7 +10,7 @@
     </parent>
 
     <groupId>ru.otus.hw</groupId>
-    <artifactId>hw17-docker</artifactId>
+    <artifactId>hw18</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>spring-docker-demo</name>
 
